@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="pig-plugin" default="all">
+<project name="intellij-pig" default="all">
   
   
   <property file="build.properties"/>
+
+  <!-- This should point ot the intellij community edition sources -->
+  <property name="idea.sources" value="../idea"/>
+
   <!-- Uncomment the following property if no tests compilation is needed -->
   <!-- 
   <property name="skip.tests" value="true"/>
@@ -180,7 +184,7 @@
   </target>
 
   <target name='jflex' description="Builds PigLexer">
-    <java jar="/Users/brandon/src/idea/tools/lexer/jflex-1.4/lib/JFlex.jar" fork="true" failonerror="true">
+    <java jar="${idea.sources}/tools/lexer/jflex-1.4/lib/JFlex.jar" fork="true" failonerror="true">
 
       <arg line="-d"/>
       <arg value="./gen/org/intellij/pig"/>
