@@ -2,7 +2,7 @@
   <id>org.intellij.pig</id>
   <name>Pig</name>
   <version>0.1</version>
-  <vendor email="brandon.kearby@gmail.com">Brandon Kearby</vendor>
+  <vendor email="brandon.kearby at gmail com">Brandon Kearby</vendor>
 
   <description>Apache Pig Language Plugin</description>
 
