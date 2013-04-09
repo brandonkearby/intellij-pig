@@ -1833,7 +1833,7 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '%'declare property_name (scalar | func_name)
+  // '%'declare property_name (scalar | func_name | EXECCOMMAND)
   public static boolean declare_statement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "declare_statement")) return false;
     if (!nextTokenIs(builder_, PIG_PERCENT)) return false;
@@ -1852,13 +1852,14 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // scalar | func_name
+  // scalar | func_name | EXECCOMMAND
   private static boolean declare_statement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "declare_statement_3")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = scalar(builder_, level_ + 1);
     if (!result_) result_ = func_name(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, PIG_EXECCOMMAND);
     if (!result_) {
       marker_.rollbackTo();
     }
@@ -1869,7 +1870,7 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '%'default property_name (scalar | func_name)
+  // '%'default property_name (scalar | func_name | EXECCOMMAND)
   public static boolean default_statement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "default_statement")) return false;
     if (!nextTokenIs(builder_, PIG_PERCENT)) return false;
@@ -1888,13 +1889,14 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // scalar | func_name
+  // scalar | func_name | EXECCOMMAND
   private static boolean default_statement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "default_statement_3")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = scalar(builder_, level_ + 1);
     if (!result_) result_ = func_name(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, PIG_EXECCOMMAND);
     if (!result_) {
       marker_.rollbackTo();
     }

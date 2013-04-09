@@ -146,6 +146,9 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         if (type == PigTypes.PIG_QUOTEDSTRING) {
             return pack(STRING);
         }
+        if (type == PigTypes.PIG_EXECCOMMAND) {
+            return pack(STRING);
+        }
         if (type == PigTypes.PIG_EQUAL) {
             return pack(OP_SIGN);
         }

@@ -183,6 +183,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "false"                { yybegin(YYINITIAL);  return PigTypes.PIG_FALSE; }
   {STRING_LITERAL}       { yybegin(YYINITIAL);  return PigTypes.PIG_QUOTEDSTRING; }
   {C_STYLE_COMMENT}      { yybegin(YYINITIAL);  return PigTypes.PIG_C_STYLE_COMMENT; }
+  {EXEC_LITERAL}         { yybegin(YYINITIAL);  return PigTypes.PIG_EXECCOMMAND; }
 //  {DOC_COMMENT}        { yybegin(YYINITIAL);  return PigTypes.PIG_DOC_COMMENT; }
   {END_OF_LINE_COMMENT}  { yybegin(YYINITIAL);  return PigTypes.PIG_END_OF_LINE_COMMENT; }
   {WHITE_SPACE_CHAR}+    { return TokenType.WHITE_SPACE; }

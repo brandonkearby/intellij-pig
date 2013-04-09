@@ -118,8 +118,8 @@ statement ::= empty_statement
             | default_statement
 private empty_statement ::= ';'
 
-declare_statement ::= '%'declare property_name (scalar | func_name)
-default_statement ::= '%'default property_name (scalar | func_name)
+declare_statement ::= '%'declare property_name (scalar | func_name | EXECCOMMAND)
+default_statement ::= '%'default property_name (scalar | func_name | EXECCOMMAND)
 
 
 private nested_op_clause ::= '(' op_clause parallel_clause? ')'
