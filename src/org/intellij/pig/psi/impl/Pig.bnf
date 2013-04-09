@@ -1,0 +1,633 @@
+/*
+ * Copyright 2012-2013 Brandon Kearby
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+//
+// Pig BNF Grammar
+//
+
+{
+  parserClass="org.intellij.pig.parser.PigParser"
+  parserUtilClass="org.intellij.pig.parser.GeneratedParserUtilBase"
+ 
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+ 
+  psiClassPrefix="Pig"
+  psiImplClassSuffix="Impl"
+  psiPackage="org.intellij.pig.psi"
+  psiImplPackage="org.intellij.pig.psi.impl"
+  elementTypePrefix="PIG_"
+
+  elementTypeHolderClass="org.intellij.pig.psi.PigTypes"
+  elementTypeClass="org.intellij.pig.psi.PigElementType"
+  tokenTypeClass="org.intellij.pig.psi.PigTokenType"
+ 
+//  psiImplUtilClass="com.pig.impl.PigPsiImplUtil"
+
+tokens = [
+  EQUAL='='
+  COLON=':'
+  LP='('
+  RP=')'
+  SIMI=';'
+  COMMA=','
+  POUND='#'
+
+  STAR='*'
+  DIV='/'
+  PERCENT='%'
+  PLUS='+'
+  MINUS='-'
+
+  DOT='.'
+  DOUBLE_DOT='..'
+  DOLLAR='$'
+  LBRACE = '{'
+  RBRACE = '}'
+  LBRACKET='['
+  RBRACKET=']'
+  QMARK='?'
+  ARROBA='@'
+
+ //operators
+ GT='>'
+ GTEQ='>='
+ LT='<'
+ LTEQ='<='
+ NOTEQ='!='
+ EQEQ='=='
+
+ STR_OP_EQ='eq'
+ STR_OP_NE='ne'
+ STR_OP_GT='gt'
+ STR_OP_LT='lt'
+ STR_OP_GTE='gte'
+ STR_OP_LTE='lte'
+
+
+
+
+ ID = 'regexp:\p{Alpha}\w*'
+// IDENTIFIER = 'regexp:\p{Alpha}\w*'
+ SCRIPT_PARAM_NAME = 'regexp:\$\p{Alpha}\w*'
+ DOLLARVAR = '$' INTEGER_LITERAL
+ DCOLON = '::'
+
+
+  QUOTEDSTRING="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+  C_STYLE_COMMENT="regexp:/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
+//  DOC_COMMENT="regexp:/\*\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
+  END_OF_LINE_COMMENT="regexp:--.*"
+  integer_literal="regexp:[0-9]+"
+  long_literal="regexp:[0-9]+[Ll]"
+
+]
+
+}
+
+// Statement represented by a foreach operator with a nested block. Simple foreach statement
+pigFile ::= statement*
+
+IDENTIFIER ::= ID ('::' ID)*
+
+statement ::= empty_statement
+            | foreach_statement
+            | general_statement ';'
+            | split_clause ';'
+            | inline_clause ';'
+            | import_clause ';'
+            | realias_clause ';'
+              // semicolons after foreach_complex_statement are optional for backwards compatibility, but to keep
+              // the grammar unambiguous if there is one then we'll parse it as a single, standalone semicolon
+              // (which matches the first statement rule)
+            | declare_statement
+            | default_statement
+private empty_statement ::= ';'
+
+declare_statement ::= '%'declare property_name (scalar | func_name)
+default_statement ::= '%'default property_name (scalar | func_name)
+
+
+private nested_op_clause ::= '(' op_clause parallel_clause? ')'
+                 | '(' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ) ) ')'
+
+private general_statement ::= identifier_assignment? (( op_clause parallel_clause? ) | nested_op_clause )
+
+private identifier_assignment ::= (IDENTIFIER '=') | ('=>')
+
+// is covered by general_statement.
+// We need to handle foreach specifically because of the ending ';', which is not required
+// if there is a nested block. This is ugly, but it gets the job done.
+foreach_statement ::= '=>' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
+                  | ( IDENTIFIER '=' )? FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
+
+foreach_plan_complex ::= '{' nested_blk '}'
+
+foreach_plan_simple ::= GENERATE flatten_generated_item ( ',' flatten_generated_item )*
+
+
+// MACRO grammar
+private macro_content ::= '{' ( macro_content | !('{' | '}') )* '}'
+
+private macro_param_clause ::= '(' ( IDENTIFIER (',' IDENTIFIER)* )? ')'
+
+private macro_return_clause
+    ::= RETURNS ((IDENTIFIER (',' IDENTIFIER)*) | VOID)
+
+private macro_body_clause ::= macro_content
+
+private  macro_clause ::= macro_param_clause macro_return_clause macro_body_clause
+
+private  inline_return_clause
+    ::= IDENTIFIER '='
+	| IDENTIFIER (',' IDENTIFIER)+ '='
+
+private parameter
+    ::= IDENTIFIER
+    | INTEGER
+    | DOUBLENUMBER
+    | BIGDECIMALNUMBER
+    | BIGINTEGERNUMBER
+    | QUOTEDSTRING
+    | DOLLARVAR
+    | SCRIPT_PARAM_NAME
+
+private inline_param_clause ::= '(' ( parameter (',' parameter)* )? ')'
+private inline_clause ::= inline_return_clause IDENTIFIER inline_param_clause
+
+// TYPES
+
+private simple_type ::= BOOLEAN | INT | LONG | FLOAT | DOUBLE | DATETIME | BIGINTEGER | BIGDECIMAL | CHARARRAY | BYTEARRAY
+
+private implicit_tuple_type ::= '(' field_def_list? ')'
+
+private explicit_tuple_type ::= tuple implicit_tuple_type
+
+private explicit_tuple_type_cast ::= TUPLE '(' ( explicit_type_cast ( ',' explicit_type_cast )* )? ')'
+
+private tuple_type ::= implicit_tuple_type | explicit_tuple_type
+
+implicit_bag_type ::= '{' NULL ':' tuple_type? '}'
+                  | '{' ( ( IDENTIFIER COLON )? tuple_type )? '}'
+
+explicit_bag_type ::= bag implicit_bag_type
+
+explicit_bag_type_cast ::= bag '{' explicit_tuple_type_cast? '}'
+
+implicit_map_type ::= '[' type? ']'
+
+explicit_map_type ::= map implicit_map_type
+
+map_type ::= implicit_map_type | explicit_map_type
+
+explicit_type ::= simple_type | explicit_tuple_type | explicit_bag_type | explicit_map_type
+
+implicit_type ::= implicit_tuple_type | implicit_bag_type | implicit_map_type
+
+type ::= explicit_type | implicit_type
+
+explicit_type_cast ::= simple_type | explicit_map_type | explicit_tuple_type_cast | explicit_bag_type_cast
+
+// CLAUSES
+
+import_clause ::= IMPORT QUOTEDSTRING  {pin = 1}
+
+define_clause ::= DEFINE IDENTIFIER ( cmd | func_clause | macro_clause)
+set_clause ::= SET property_name (scalar | func_name)
+register_clause ::= REGISTER QUOTEDSTRING
+private property_name ::= IDENTIFIER ('.' IDENTIFIER)*
+
+realias_clause ::= IDENTIFIER '=' IDENTIFIER
+
+
+parallel_clause ::= PARALLEL INTEGER
+
+op_clause ::= define_clause
+          | load_clause
+          | group_clause
+          | cube_clause
+          | store_clause
+          | filter_clause
+          | distinct_clause
+          | illustrate_clause
+          | limit_clause
+          | sample_clause
+          | order_clause
+          | rank_clause
+          | cross_clause
+          | join_clause
+          | union_clause
+          | stream_clause
+          | mr_clause
+          | set_clause
+          | register_clause
+          | DUMP
+
+ship_clause ::= SHIP '(' path_list? ')'
+
+path_list ::= QUOTEDSTRING ( ',' QUOTEDSTRING )*
+
+cache_clause ::= CACHE '(' path_list ')'
+
+input_clause ::= INPUT '(' stream_cmd_list ')'
+
+output_clause ::= OUTPUT '(' stream_cmd_list ')'
+
+error_clause ::= STDERROR '(' ( QUOTEDSTRING ( LIMIT INTEGER )? )? ')'
+
+load_clause ::= LOAD QUOTEDSTRING ( USING func_clause )? as_clause? {pin = 1}
+
+func_clause ::= func_name_with_args |  func_name_zero_args | func_name
+private func_name_zero_args ::= func_name '(' ')'
+private func_name_with_args ::= func_name '(' func_args ')'
+
+// needed for disambiguation when parsing expressions...see below
+func_name_without_columns ::= eid_without_columns ( ( '.' | '$' ) eid )*
+
+func_name ::= eid ( ( '.' | '$' ) eid )*
+
+func_args_string ::= QUOTEDSTRING | MULTILINE_QUOTEDSTRING
+
+func_args ::= func_args_string ( ',' func_args_string )*
+
+group_clause ::= ( GROUP | COGROUP ) group_item_list ( USING QUOTEDSTRING )? partition_clause?
+
+private group_item_list ::= group_item ( ',' group_item )*
+
+group_item ::= rel ( join_group_by_clause | ALL | ANY ) ( INNER | OUTER )?
+
+// "AS" CLAUSES
+
+explicit_field_def ::= IDENTIFIER ( ':' type )?
+                   | explicit_type
+
+field_def ::= explicit_field_def
+          | implicit_type
+
+field_def_list ::= field_def ( ',' field_def )*
+
+// we have two tuple types as implicit_tuple_types can be confused with parentheses around
+// a field_def - so to remove this ambiguity we'll decide brackets around a single field_def
+// type is *not* a tuple
+as_clause ::= AS ( explicit_field_def | ( '(' field_def_list? ')' ) )
+
+// OTHERS
+
+stream_cmd_list ::= stream_cmd ( COMMA stream_cmd )*
+
+stream_cmd ::= ( STDIN | STDOUT | QUOTEDSTRING ) ( USING func_clause )?
+
+cmd ::= EXECCOMMAND ( ship_clause | cache_clause | input_clause | output_clause | error_clause )*
+
+rel ::= IDENTIFIER | previous_rel | nested_op_clause
+
+previous_rel ::= '@'
+
+store_clause ::= STORE rel INTO QUOTEDSTRING ( USING func_clause )?
+
+filter_clause ::= FILTER rel BY (('(' cond ')') | cond)
+
+stream_clause ::= STREAM rel THROUGH ( EXECCOMMAND | IDENTIFIER ) as_clause?
+
+mr_clause ::= MAPREDUCE QUOTEDSTRING ( '(' path_list ')' )? store_clause load_clause EXECCOMMAND?
+
+split_clause ::= SPLIT rel INTO split_branch (',' split_branch)* split_otherwise?
+
+split_branch ::= IDENTIFIER IF (('(' cond ')') | cond)
+
+split_otherwise ::= IDENTIFIER OTHERWISE
+
+limit_clause ::= LIMIT rel expr
+
+sample_clause ::= SAMPLE rel expr
+
+rank_clause ::= RANK rel ( rank_by_statement )?
+
+rank_by_statement ::= BY rank_by_clause DENSE
+
+rank_by_clause ::= STAR ( ASC | DESC )?
+               | rank_list
+
+rank_list ::= rank_col ( ',' rank_col )*
+
+rank_col ::= col_range ( ASC | DESC )?
+         | col_ref ( ASC | DESC )?
+
+order_clause ::= ORDER rel BY order_by_clause ( USING func_clause )?
+
+order_by_clause ::= STAR ( ASC | DESC )?
+                | order_col_list
+
+order_col_list ::= order_col ( ',' order_col )*
+
+order_col ::= col_range (ASC | DESC)?
+          | col_ref ( ASC | DESC )?
+          | '(' col_ref ( ASC | DESC )? ')'
+
+distinct_clause ::= DISTINCT rel partition_clause?
+illustrate_clause ::= ILLUSTRATE IDENTIFIER
+
+partition_clause ::= PARTITION BY func_name
+
+rel_list ::= rel ( ',' rel )*
+
+cross_clause ::= CROSS rel_list partition_clause?
+
+
+join_clause ::= JOIN join_sub_clause ( USING join_type )? partition_clause?
+
+join_type ::= QUOTEDSTRING
+
+join_sub_clause ::= join_item ( ( ( LEFT | RIGHT | FULL ) OUTER? ',' join_item ) | ( ( ',' join_item )+ ) )
+
+join_item ::= rel join_group_by_clause
+
+// this can either be a single arg or something like (a,b) - which is
+// indistinguishable from a tuple. We'll therefore parse a single argument
+// (which can be a tuple of several real_args) and expand it:
+
+join_group_by_clause ::= BY (('(' arg_list ')') |  real_arg )
+
+union_clause ::= UNION ONSCHEMA? rel_list
+
+cube_clause ::= CUBE rel BY cube_rollup_list ( ',' cube_rollup_list )*
+
+cube_rollup_list ::= ( CUBE | ROLLUP ) '(' real_arg ( ',' real_arg )* ')'
+
+flatten_clause ::= FLATTEN '(' expr ')'
+
+// unlike loading and streaming, we want the as_clause (if present) in a different format (i.e.
+// we drop the AS token itself).
+generate_as_clause ::=  AS ( ( '(' field_def_list ')' ) | explicit_field_def )
+
+flatten_generated_item ::= flatten_clause generate_as_clause? | real_arg generate_as_clause?
+
+// EXPRESSIONS
+
+// conditional precedence is OR weakest, then AND, then NOT, then IS NOT NULL and the comparison operators equally
+// by design the boolean operator hierarchy is entirely below the expression hierarchy
+
+real_arg ::= expr
+         | '*'
+         | col_range
+
+cond ::= (cond_with_parens |cond_without_parens)
+private cond_with_parens ::= '(' cond+ ')'
+private cond_without_parens ::=  not_cond ( (AND|OR) cond )*
+
+not_cond  ::= (NOT)? unary_cond
+
+
+unary_cond ::= expr ( ( IS (NOT)? NULL ) | ( rel_op expr ) )
+
+
+expr ::= multi_expr ( ( '+' | '-' ) multi_expr )*
+
+multi_expr ::= cast_expr ( ( '*' | '/' | '%' ) cast_expr )*
+
+func_name_suffix ::= ( ( '$' | '.' ) eid )+
+
+//cast_expr ::= ('(' type|function_name_with_columns ')')? cast_expr2
+cast_expr
+          ::=
+            identifier_with_function
+          | function_name_with_columns
+          | '-' cast_expr
+          // single columns and functions (both of which can start with an identifier). Note that we have to be
+          // careful with periods straight after the identifier, as we want those to be projections, not function
+          // calls
+          | col_ref_without_identifier projection*
+          | identifier_with_projection
+          | curly_expr
+          | bracket_expr
+          | paren_expr
+          | scalar
+          | SCRIPT_PARAM_NAME
+private identifier_with_projection ::= IDENTIFIER projection*
+private function_name_with_columns ::= func_name_without_columns '(' arg_list? ')' projection*
+private arg_list ::= ( real_arg ( ',' real_arg )* )
+private identifier_with_function ::= IDENTIFIER func_name_suffix? '(' arg_list? ')' projection*
+
+
+// now we have to deal with parentheses: in an expr, '(' can be the
+// start of a cast, the start of a nested expression or the start of
+// a tuple. We'll ensure parsing is unambiguous by assuming a single
+// expression in parentheses is a nested expression, whereas two or
+// more nested expressions are a tuple (unless that single expression
+// is a literal, in which case we assume tuple with a single element
+// - that literal).
+paren_expr ::= '(' try_implicit_map_cast
+;
+
+try_implicit_map_cast
+           // we'll also allow implicit map casts (for backwards compatibility only -
+           // bag and tuple casts have to be explicit and it makes the grammar more
+           // simple). Unfortunately we'll have to turn on back-tracking for this rule,
+           // as LEFT_PAREN LEFT_BRACKET could be a literal map in a EXPR_IN_PAREN.
+           // It'd be much better if we could remove this from the Pig language (and
+           // just rely on explicit map casts) - then we'd have no backtracking at all!
+           ::= ( implicit_map_type ')' cast_expr) /*=> implicit_map_type RIGHT_PAREN cast_expr -> ^( CAST_EXPR implicit_map_type cast_expr )*/
+           | after_left_paren
+;
+
+after_left_paren ::= explicit_type_cast ')' cast_expr /*-> ^( CAST_EXPR explicit_type_cast cast_expr )*/
+                 // tuples
+                 | ')' projection* /*-> ^( TUPLE_VAL ) projection**/
+                 | '*' ( ',' real_arg )* ')' projection* /*-> ^( FUNC_EVAL TOTUPLE STAR real_arg* ) projection**/
+                 | col_range ( ',' real_arg )* ')' projection* /*-> ^( FUNC_EVAL TOTUPLE col_range real_arg* ) projection**/
+                 // Tuples begin with '(' expr, but shorthand-booleans begin with '(' cond. As cond
+                 // and expr are indistinguishable, we'll parse as a cond (i.e. the most lenient) and
+                 // for exprs, strip off the BOOL_COND trees. You can have both nested conds and nested
+                 // exprs, so we'll just assume cond.
+                 | cond
+                   ( ( ( ',' real_arg )+ ')' projection* /*-> ^( FUNC_EVAL TOTUPLE cond real_arg+ ) projection* */)
+                   | ( ')' /*-> ^( EXPR_IN_PAREN cond )*/ )
+                   | ( '?' expr ':' expr ')' /*-> ^( BIN_EXPR cond $exp1 $exp2 )*/ ) )
+;
+
+//paren_expr ::= '(' (expr|cond)* ')'
+
+curly_expr ::= '{' real_arg ( ',' real_arg )* '}' projection*
+           | '{' '}' projection*
+
+bracket_expr ::= '[' real_arg ( ',' real_arg )* ']' projection*
+             | '[' keyvalue ( ',' keyvalue )* ']' projection*
+             | '[' ']' projection*
+
+projection ::= '.' ( col_ref | '(' col_ref ( ',' col_ref )* ')' )
+           | '#' ( QUOTEDSTRING | NULL )
+
+// ATOMS
+
+// for disambiguation with func_names
+col_ref_without_identifier ::= GROUP | CUBE | DOLLARVAR
+
+col_ref ::= col_ref_without_identifier | IDENTIFIER
+
+col_range ::= col_ref '..' col_ref?
+          |  '..' col_ref
+
+scalar ::= INTEGER_LITERAL
+       | LONG_LITERAL
+       | FLOAT_LITERAL
+       | DOUBLE_LITERAL
+       | QUOTEDSTRING
+       | NULL
+       | TRUE
+       | FALSE
+keyvalue ::= QUOTEDSTRING '#' literal
+
+literal_map ::= '[' keyvalue ( ',' keyvalue )* ']'
+            | '[' ']'
+
+
+literal_bag ::= '{' literal_tuple ( ',' literal_tuple )* '}'
+            | '{' '}'
+
+literal_tuple ::= '(' literal ( ',' literal )* ')'
+              | '(' ')'
+
+literal ::= scalar | literal_map | literal_bag | literal_tuple | SCRIPT_PARAM_NAME
+
+// NESTING
+
+nested_blk ::= ( nested_command ';' )* GENERATE flatten_generated_item ( ',' flatten_generated_item )* ';'
+
+nested_command ::= ( IDENTIFIER '=' col_ref '.' col_ref_list { input'.'LA( 1 ) '==' ';' }? ) '=>' ( IDENTIFIER '=' nested_proj )
+               | IDENTIFIER '=' expr
+               | IDENTIFIER '=' nested_op
+
+nested_op ::= nested_filter
+          | nested_sort
+          | nested_distinct
+          | nested_limit
+          | nested_cross
+          | nested_foreach
+
+nested_proj ::= col_ref '.' col_ref_list
+
+col_ref_list ::= ( col_ref | ( '(' col_ref ( ',' col_ref )* ')' ) )
+
+nested_filter ::= FILTER nested_op_input BY cond
+
+nested_sort ::= ORDER nested_op_input BY  order_by_clause ( USING func_clause )?
+
+nested_distinct ::= DISTINCT nested_op_input
+
+nested_limit ::= LIMIT nested_op_input ( (INTEGER ';') '=>' INTEGER | expr )
+
+nested_cross ::= CROSS nested_op_input_list
+
+nested_foreach::= FOREACH nested_op_input GENERATE flatten_generated_item ( ',' flatten_generated_item )*
+
+nested_op_input ::= col_ref | nested_proj
+
+nested_op_input_list ::= nested_op_input ( ',' nested_op_input )*
+
+// IDENTIFIERS
+
+// extended identifier, handling the keyword and identifier conflicts. Ugly but there is no other choice.
+eid_without_columns ::= rel_str_op
+    | IMPORT
+    | RETURNS
+    | DEFINE
+    | LOAD
+    | FILTER
+    | FOREACH
+    | ROLLUP
+    | ORDER
+    | DISTINCT
+    | COGROUP
+    | JOIN
+    | CROSS
+    | UNION
+    | SPLIT
+    | INTO
+    | IF
+    | ALL
+    | AS
+    | BY
+    | USING
+    | INNER
+    | OUTER
+    | PARALLEL
+    | PARTITION
+    | AND
+    | OR
+    | GENERATE
+    | ASC
+    | DESC
+    | BOOL
+    | BIGINTEGER
+    | BIGDECIMAL
+    | DATETIME
+    | CHARARRAY
+    | BYTEARRAY
+    | IS
+    | STREAM
+    | THROUGH
+    | STORE
+    | MAPREDUCE
+    | SHIP
+    | CACHE
+    | INPUT
+    | OUTPUT
+    | STDERROR
+    | STDIN
+    | STDOUT
+    | LIMIT
+    | SAMPLE
+    | LEFT
+    | RIGHT
+    | FULL
+    | REALIAS
+    | BOOL_COND
+;
+
+eid ::= eid_without_columns
+    | IDENTIFIER
+    | GROUP
+    | CUBE
+    | TRUE
+    | FALSE
+    | INT
+    | LONG
+    | FLOAT
+    | DOUBLE
+    | NULL
+    | NOT
+    | FLATTEN
+    | BAG
+    | TUPLE
+    | MAP
+
+// relational operator
+rel_op ::= rel_str_op
+       | '=='
+       | '!='
+       | '>'
+       | '>='
+       | '<'
+       | '<='
+
+rel_str_op ::= STR_OP_EQ
+           | STR_OP_NE
+           | STR_OP_GT
+           | STR_OP_LT
+           | STR_OP_GTE
+           | STR_OP_LTE
+           | STR_OP_MATCHES

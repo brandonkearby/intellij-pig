@@ -1,1 +1,10 @@
+<<<<<<< HEAD
 out
+=======
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+>>>>>>> 8a1b931b5900a9358eba69548906884bc2b4f35a

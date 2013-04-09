@@ -1,0 +1,46 @@
+<idea-plugin version="2">
+  <id>org.intellij.pig</id>
+  <name>Pig</name>
+  <version>0.1</version>
+  <vendor email="brandon.kearby@gmail.com">Brandon Kearby</vendor>
+
+  <description>Apache Pig Language Plugin</description>
+
+  <change-notes><![CDATA[
+      ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="107.105"/>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <lang.braceMatcher language="Pig" implementationClass="org.intellij.pig.PigBraceMatcher"/>
+    <fileTypeFactory implementation="org.intellij.pig.PigFileTypeFactory"/>
+    <lang.parserDefinition language="Pig" implementationClass="org.intellij.pig.PigParserDefinition"/>
+    <lang.syntaxHighlighterFactory key="Pig" implementationClass="org.intellij.pig.PigSyntaxHighlighterFactory"/>
+    <!--<colorSettingsPage implementation="org.intellij.pig.PigSettingsPage"/>-->
+    <!--<annotator language="JAVA" implementationClass="org.intellij.pig.PigAnnotator"/>-->
+    <completion.contributor language="Pig" implementationClass="org.intellij.pig.PigCompletionContributor"/>
+    <lang.commenter language="Pig" implementationClass="org.intellij.pig.PigCommenter"/>
+    <lang.foldingBuilder language="Pig" implementationClass="org.intellij.pig.PigCodeFoldingBuilder"/>
+
+  </extensions>
+</idea-plugin>
