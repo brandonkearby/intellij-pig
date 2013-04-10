@@ -1,5 +1,5 @@
 # IntelliJ - Pig Plugin
-Pig Plugin adds [Apache Pig](http://pig.apache.org/) Language support to Intelli    J.
+Pig Plugin adds [Apache Pig](http://pig.apache.org/) Language support to [IntelliJ](http://www.jetbrains.com/idea/).
 
 # Features
 * Keyword highlighting
@@ -8,7 +8,7 @@ Pig Plugin adds [Apache Pig](http://pig.apache.org/) Language support to Intelli
 * Syntax and errors highlighting
 
 # Installation
-Select the pig-plugin.jar from the plugin manager
+Select the pig-plugin.jar from the plugin manager or install from the IntelliJ plugin repo.
 
 
 ## Donations
