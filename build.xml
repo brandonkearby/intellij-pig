@@ -190,7 +190,7 @@
       <arg value="./gen/org/intellij/pig"/>
 
       <arg value="--skel"/>
-      <arg value="/Users/brandon/src/idea/tools/lexer/idea-flex.skeleton"/>
+      <arg value="${idea.sources}/tools/lexer/idea-flex.skeleton"/>
 
       <arg value="--charat"/>
       <arg value="--nobak"/>
