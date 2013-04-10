@@ -96,6 +96,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "illustrate"             { yybegin(YYINITIAL);  return PigTypes.PIG_ILLUSTRATE; }
   "if"                     { yybegin(YYINITIAL);  return PigTypes.PIG_IF; }
   "is"                     { yybegin(YYINITIAL);  return PigTypes.PIG_IS; }
+  "import"                 { yybegin(YYINITIAL);  return PigTypes.PIG_IMPORT; }
   "load"                   { yybegin(YYINITIAL);  return PigTypes.PIG_LOAD; }
   "limit"                  { yybegin(YYINITIAL);  return PigTypes.PIG_LIMIT; }
   "mapreduce"              { yybegin(YYINITIAL);  return PigTypes.PIG_MAPREDUCE; }
