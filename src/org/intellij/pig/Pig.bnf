@@ -214,7 +214,7 @@ private property_name ::= eid ('.' eid)*  // current hack adding map
 realias_clause ::= IDENTIFIER '=' IDENTIFIER
 
 
-parallel_clause ::= PARALLEL INTEGER
+parallel_clause ::= PARALLEL (INTEGER_LITERAL|SCRIPT_PARAM_NAME)
 
 op_clause ::= define_clause
           | load_clause

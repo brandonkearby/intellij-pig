@@ -6263,18 +6263,35 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // PARALLEL INTEGER
+  // PARALLEL (INTEGER_LITERAL|SCRIPT_PARAM_NAME)
   public static boolean parallel_clause(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "parallel_clause")) return false;
     if (!nextTokenIs(builder_, PIG_PARALLEL)) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = consumeTokens(builder_, 0, PIG_PARALLEL, PIG_INTEGER);
+    result_ = consumeToken(builder_, PIG_PARALLEL);
+    result_ = result_ && parallel_clause_1(builder_, level_ + 1);
     if (result_) {
       marker_.done(PIG_PARALLEL_CLAUSE);
     }
     else {
       marker_.rollbackTo();
+    }
+    return result_;
+  }
+
+  // INTEGER_LITERAL|SCRIPT_PARAM_NAME
+  private static boolean parallel_clause_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "parallel_clause_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, PIG_INTEGER_LITERAL);
+    if (!result_) result_ = consumeToken(builder_, PIG_SCRIPT_PARAM_NAME);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
     }
     return result_;
   }
