@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.intellij.pig</id>
   <name>Pig</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <vendor email="brandon.kearby at gmail com">Brandon Kearby</vendor>
 
   <description>Apache Pig Language Plugin</description>
