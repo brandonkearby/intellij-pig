@@ -475,10 +475,6 @@ public class PigVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitTryImplicitMapCast(@NotNull PigTryImplicitMapCast o) {
-    visitPsiElement(o);
-  }
-
   public void visitType(@NotNull PigType o) {
     visitPsiElement(o);
   }

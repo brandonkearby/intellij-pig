@@ -73,6 +73,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DUMP);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_FILTER);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_FLOAT);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_FULL);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_FLATTEN);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_FOREACH);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_GENERATE);

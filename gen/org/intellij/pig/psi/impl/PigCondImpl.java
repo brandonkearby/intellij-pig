@@ -24,9 +24,9 @@ public class PigCondImpl extends ASTWrapperPsiElement implements PigCond {
   }
 
   @Override
-  @Nullable
+  @NotNull
   public PigNotCond getNotCond() {
-    return findChildByClass(PigNotCond.class);
+    return findNotNullChildByClass(PigNotCond.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

@@ -14,9 +14,6 @@ public interface PigAfterLeftParen extends PsiElement {
   PigColRange getColRange();
 
   @Nullable
-  PigCond getCond();
-
-  @Nullable
   PigExplicitTypeCast getExplicitTypeCast();
 
   @NotNull
@@ -27,5 +24,8 @@ public interface PigAfterLeftParen extends PsiElement {
 
   @NotNull
   List<PigRealArg> getRealArgList();
+
+  @Nullable
+  PigUnaryCond getUnaryCond();
 
 }

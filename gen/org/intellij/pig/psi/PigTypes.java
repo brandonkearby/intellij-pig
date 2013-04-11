@@ -125,7 +125,6 @@ public interface PigTypes {
   IElementType PIG_STREAM_CLAUSE = new PigElementType("PIG_STREAM_CLAUSE");
   IElementType PIG_STREAM_CMD = new PigElementType("PIG_STREAM_CMD");
   IElementType PIG_STREAM_CMD_LIST = new PigElementType("PIG_STREAM_CMD_LIST");
-  IElementType PIG_TRY_IMPLICIT_MAP_CAST = new PigElementType("PIG_TRY_IMPLICIT_MAP_CAST");
   IElementType PIG_TYPE = new PigElementType("PIG_TYPE");
   IElementType PIG_UNARY_COND = new PigElementType("PIG_UNARY_COND");
   IElementType PIG_UNION_CLAUSE = new PigElementType("PIG_UNION_CLAUSE");
@@ -616,9 +615,6 @@ public interface PigTypes {
       }
       else if (type == PIG_STREAM_CMD_LIST) {
         return new PigStreamCmdListImpl(node);
-      }
-      else if (type == PIG_TRY_IMPLICIT_MAP_CAST) {
-        return new PigTryImplicitMapCastImpl(node);
       }
       else if (type == PIG_TYPE) {
         return new PigTypeImpl(node);

@@ -10,7 +10,7 @@ public interface PigCond extends PsiElement {
   @NotNull
   List<PigCond> getCondList();
 
-  @Nullable
+  @NotNull
   PigNotCond getNotCond();
 
 }

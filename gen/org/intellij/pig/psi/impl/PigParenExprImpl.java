@@ -19,8 +19,8 @@ public class PigParenExprImpl extends ASTWrapperPsiElement implements PigParenEx
 
   @Override
   @NotNull
-  public PigTryImplicitMapCast getTryImplicitMapCast() {
-    return findNotNullChildByClass(PigTryImplicitMapCast.class);
+  public PigAfterLeftParen getAfterLeftParen() {
+    return findNotNullChildByClass(PigAfterLeftParen.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

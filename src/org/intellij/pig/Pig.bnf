@@ -80,7 +80,6 @@ tokens = [
 
 
 
-
  ID = 'regexp:\p{Alpha}\w*'
 // IDENTIFIER = 'regexp:\p{Alpha}\w*'
  SCRIPT_PARAM_NAME = 'regexp:\$\p{Alpha}\w*'
@@ -385,9 +384,7 @@ real_arg ::= expr
          | '*'
          | col_range
 
-cond ::= (cond_with_parens |cond_without_parens)
-private cond_with_parens ::= '(' cond+ ')'
-private cond_without_parens ::=  not_cond ( (AND|OR) cond )*
+cond ::=  not_cond ( (AND|OR) cond )*
 
 not_cond  ::= (NOT)? unary_cond
 
@@ -416,7 +413,6 @@ cast_expr
           | bracket_expr
           | paren_expr
           | scalar
-          | SCRIPT_PARAM_NAME
 private identifier_with_projection ::= IDENTIFIER projection*
 private function_name_with_columns ::= func_name_without_columns '(' arg_list? ')' projection*
 private arg_list ::= ( real_arg ( ',' real_arg )* )
@@ -430,19 +426,7 @@ private identifier_with_function ::= IDENTIFIER func_name_suffix? '(' arg_list? 
 // more nested expressions are a tuple (unless that single expression
 // is a literal, in which case we assume tuple with a single element
 // - that literal).
-paren_expr ::= '(' try_implicit_map_cast
-;
-
-try_implicit_map_cast
-           // we'll also allow implicit map casts (for backwards compatibility only -
-           // bag and tuple casts have to be explicit and it makes the grammar more
-           // simple). Unfortunately we'll have to turn on back-tracking for this rule,
-           // as LEFT_PAREN LEFT_BRACKET could be a literal map in a EXPR_IN_PAREN.
-           // It'd be much better if we could remove this from the Pig language (and
-           // just rely on explicit map casts) - then we'd have no backtracking at all!
-           ::= ( implicit_map_type ')' cast_expr) /*=> implicit_map_type RIGHT_PAREN cast_expr -> ^( CAST_EXPR implicit_map_type cast_expr )*/
-           | after_left_paren
-;
+paren_expr ::= '('  after_left_paren
 
 after_left_paren ::= explicit_type_cast ')' cast_expr /*-> ^( CAST_EXPR explicit_type_cast cast_expr )*/
                  // tuples
@@ -453,7 +437,7 @@ after_left_paren ::= explicit_type_cast ')' cast_expr /*-> ^( CAST_EXPR explicit
                  // and expr are indistinguishable, we'll parse as a cond (i.e. the most lenient) and
                  // for exprs, strip off the BOOL_COND trees. You can have both nested conds and nested
                  // exprs, so we'll just assume cond.
-                 | cond
+                 | (unary_cond|expr)
                    ( ( ( ',' real_arg )+ ')' projection* /*-> ^( FUNC_EVAL TOTUPLE cond real_arg+ ) projection* */)
                    | ( ')' /*-> ^( EXPR_IN_PAREN cond )*/ )
                    | ( '?' expr ':' expr ')' /*-> ^( BIN_EXPR cond $exp1 $exp2 )*/ ) )
@@ -489,6 +473,7 @@ scalar ::= INTEGER_LITERAL
        | NULL
        | TRUE
        | FALSE
+       | SCRIPT_PARAM_NAME
 keyvalue ::= QUOTEDSTRING '#' literal
 
 literal_map ::= '[' keyvalue ( ',' keyvalue )* ']'
@@ -501,7 +486,7 @@ literal_bag ::= '{' literal_tuple ( ',' literal_tuple )* '}'
 literal_tuple ::= '(' literal ( ',' literal )* ')'
               | '(' ')'
 
-literal ::= scalar | literal_map | literal_bag | literal_tuple | SCRIPT_PARAM_NAME
+literal ::= scalar | literal_map | literal_bag | literal_tuple
 
 // NESTING
 

@@ -374,9 +374,6 @@ public class PigParser implements PsiParser {
     else if (root_ == PIG_STREAM_CMD_LIST) {
       result_ = stream_cmd_list(builder_, level_ + 1);
     }
-    else if (root_ == PIG_TRY_IMPLICIT_MAP_CAST) {
-      result_ = try_implicit_map_cast(builder_, level_ + 1);
-    }
     else if (root_ == PIG_TYPE) {
       result_ = type(builder_, level_ + 1);
     }
@@ -460,7 +457,7 @@ public class PigParser implements PsiParser {
   //                  // and expr are indistinguishable, we'll parse as a cond (i.e. the most lenient) and
   //                  // for exprs, strip off the BOOL_COND trees. You can have both nested conds and nested
   //                  // exprs, so we'll just assume cond.
-  //                  | cond
+  //                  | (unary_cond|expr)
   //                    ( ( ( ',' real_arg )+ ')' projection* /*-> ^( FUNC_EVAL TOTUPLE cond real_arg+ ) projection* */)
   //                    | ( ')' /*-> ^( EXPR_IN_PAREN cond )*/ )
   //                    | ( '?' expr ':' expr ')' /*-> ^( BIN_EXPR cond $exp1 $exp2 )*/ ) )
@@ -665,7 +662,7 @@ public class PigParser implements PsiParser {
     return true;
   }
 
-  // cond
+  // (unary_cond|expr)
   //                    ( ( ( ',' real_arg )+ ')' projection* /*-> ^( FUNC_EVAL TOTUPLE cond real_arg+ ) projection* */)
   //                    | ( ')' /*-> ^( EXPR_IN_PAREN cond )*/ )
   //                    | ( '?' expr ':' expr ')' /*-> ^( BIN_EXPR cond $exp1 $exp2 )*/ ) )
@@ -673,8 +670,24 @@ public class PigParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "after_left_paren_4")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = cond(builder_, level_ + 1);
+    result_ = after_left_paren_4_0(builder_, level_ + 1);
     result_ = result_ && after_left_paren_4_1(builder_, level_ + 1);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    return result_;
+  }
+
+  // unary_cond|expr
+  private static boolean after_left_paren_4_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "after_left_paren_4_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = unary_cond(builder_, level_ + 1);
+    if (!result_) result_ = expr(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
     }
@@ -1139,7 +1152,6 @@ public class PigParser implements PsiParser {
   //           | bracket_expr
   //           | paren_expr
   //           | scalar
-  //           | SCRIPT_PARAM_NAME
   public static boolean cast_expr(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cast_expr")) return false;
     boolean result_ = false;
@@ -1154,7 +1166,6 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = bracket_expr(builder_, level_ + 1);
     if (!result_) result_ = paren_expr(builder_, level_ + 1);
     if (!result_) result_ = scalar(builder_, level_ + 1);
-    if (!result_) result_ = consumeToken(builder_, PIG_SCRIPT_PARAM_NAME);
     if (result_) {
       marker_.done(PIG_CAST_EXPR);
     }
@@ -1435,14 +1446,14 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // cond_with_parens |cond_without_parens
+  // not_cond ( (AND|OR) cond )*
   public static boolean cond(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cond")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<cond>");
-    result_ = cond_with_parens(builder_, level_ + 1);
-    if (!result_) result_ = cond_without_parens(builder_, level_ + 1);
+    result_ = not_cond(builder_, level_ + 1);
+    result_ = result_ && cond_1(builder_, level_ + 1);
     if (result_) {
       marker_.done(PIG_COND);
     }
@@ -1453,76 +1464,15 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  /* ********************************************************** */
-  // '(' cond+ ')'
-  static boolean cond_with_parens(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cond_with_parens")) return false;
-    if (!nextTokenIs(builder_, PIG_LP)) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, PIG_LP);
-    result_ = result_ && cond_with_parens_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, PIG_RP);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  // cond+
-  private static boolean cond_with_parens_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cond_with_parens_1")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = cond(builder_, level_ + 1);
-    int offset_ = builder_.getCurrentOffset();
-    while (result_) {
-      if (!cond(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "cond_with_parens_1");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // not_cond ( (AND|OR) cond )*
-  static boolean cond_without_parens(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cond_without_parens")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = not_cond(builder_, level_ + 1);
-    result_ = result_ && cond_without_parens_1(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
   // ( (AND|OR) cond )*
-  private static boolean cond_without_parens_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cond_without_parens_1")) return false;
+  private static boolean cond_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "cond_1")) return false;
     int offset_ = builder_.getCurrentOffset();
     while (true) {
-      if (!cond_without_parens_1_0(builder_, level_ + 1)) break;
+      if (!cond_1_0(builder_, level_ + 1)) break;
       int next_offset_ = builder_.getCurrentOffset();
       if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "cond_without_parens_1");
+        empty_element_parsed_guard_(builder_, offset_, "cond_1");
         break;
       }
       offset_ = next_offset_;
@@ -1531,11 +1481,11 @@ public class PigParser implements PsiParser {
   }
 
   // (AND|OR) cond
-  private static boolean cond_without_parens_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cond_without_parens_1_0")) return false;
+  private static boolean cond_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "cond_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = cond_without_parens_1_0_0(builder_, level_ + 1);
+    result_ = cond_1_0_0(builder_, level_ + 1);
     result_ = result_ && cond(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
@@ -1547,8 +1497,8 @@ public class PigParser implements PsiParser {
   }
 
   // AND|OR
-  private static boolean cond_without_parens_1_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "cond_without_parens_1_0_0")) return false;
+  private static boolean cond_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "cond_1_0_0")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, PIG_AND);
@@ -4489,7 +4439,7 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // scalar | literal_map | literal_bag | literal_tuple | SCRIPT_PARAM_NAME
+  // scalar | literal_map | literal_bag | literal_tuple
   public static boolean literal(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "literal")) return false;
     boolean result_ = false;
@@ -4499,7 +4449,6 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = literal_map(builder_, level_ + 1);
     if (!result_) result_ = literal_bag(builder_, level_ + 1);
     if (!result_) result_ = literal_tuple(builder_, level_ + 1);
-    if (!result_) result_ = consumeToken(builder_, PIG_SCRIPT_PARAM_NAME);
     if (result_) {
       marker_.done(PIG_LITERAL);
     }
@@ -6359,14 +6308,14 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '(' try_implicit_map_cast
+  // '('  after_left_paren
   public static boolean paren_expr(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "paren_expr")) return false;
     if (!nextTokenIs(builder_, PIG_LP)) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, PIG_LP);
-    result_ = result_ && try_implicit_map_cast(builder_, level_ + 1);
+    result_ = result_ && after_left_paren(builder_, level_ + 1);
     if (result_) {
       marker_.done(PIG_PAREN_EXPR);
     }
@@ -7149,6 +7098,7 @@ public class PigParser implements PsiParser {
   //        | NULL
   //        | TRUE
   //        | FALSE
+  //        | SCRIPT_PARAM_NAME
   public static boolean scalar(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "scalar")) return false;
     boolean result_ = false;
@@ -7162,6 +7112,7 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, PIG_NULL);
     if (!result_) result_ = consumeToken(builder_, PIG_TRUE);
     if (!result_) result_ = consumeToken(builder_, PIG_FALSE);
+    if (!result_) result_ = consumeToken(builder_, PIG_SCRIPT_PARAM_NAME);
     if (result_) {
       marker_.done(PIG_SCALAR);
     }
@@ -7695,43 +7646,6 @@ public class PigParser implements PsiParser {
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, PIG_COMMA);
     result_ = result_ && stream_cmd(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // ( implicit_map_type ')' cast_expr) /*=> implicit_map_type RIGHT_PAREN cast_expr -> ^( CAST_EXPR implicit_map_type cast_expr )*/
-  //            | after_left_paren
-  public static boolean try_implicit_map_cast(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "try_implicit_map_cast")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<try implicit map cast>");
-    result_ = try_implicit_map_cast_0(builder_, level_ + 1);
-    if (!result_) result_ = after_left_paren(builder_, level_ + 1);
-    if (result_) {
-      marker_.done(PIG_TRY_IMPLICIT_MAP_CAST);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
-    return result_;
-  }
-
-  // implicit_map_type ')' cast_expr
-  private static boolean try_implicit_map_cast_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "try_implicit_map_cast_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = implicit_map_type(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, PIG_RP);
-    result_ = result_ && cast_expr(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
     }

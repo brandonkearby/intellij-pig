@@ -31,12 +31,6 @@ public class PigAfterLeftParenImpl extends ASTWrapperPsiElement implements PigAf
 
   @Override
   @Nullable
-  public PigCond getCond() {
-    return findChildByClass(PigCond.class);
-  }
-
-  @Override
-  @Nullable
   public PigExplicitTypeCast getExplicitTypeCast() {
     return findChildByClass(PigExplicitTypeCast.class);
   }
@@ -57,6 +51,12 @@ public class PigAfterLeftParenImpl extends ASTWrapperPsiElement implements PigAf
   @NotNull
   public List<PigRealArg> getRealArgList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PigRealArg.class);
+  }
+
+  @Override
+  @Nullable
+  public PigUnaryCond getUnaryCond() {
+    return findChildByClass(PigUnaryCond.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

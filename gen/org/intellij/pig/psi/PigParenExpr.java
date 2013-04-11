@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface PigParenExpr extends PsiElement {
 
   @NotNull
-  PigTryImplicitMapCast getTryImplicitMapCast();
+  PigAfterLeftParen getAfterLeftParen();
 
 }
