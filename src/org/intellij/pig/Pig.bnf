@@ -39,6 +39,7 @@
 //  psiImplUtilClass="com.pig.impl.PigPsiImplUtil"
 
 tokens = [
+  MAP
   EQUAL='='
   COLON=':'
   LP='('
@@ -117,7 +118,7 @@ statement ::= empty_statement
             | default_statement
 private empty_statement ::= ';'
 
-declare_statement ::= '%'declare property_name (scalar | func_name | EXECCOMMAND)
+declare_statement ::= '%'DECLARE property_name (scalar | func_name | EXECCOMMAND)
 default_statement ::= '%'default property_name (scalar | func_name | EXECCOMMAND)
 
 
@@ -208,7 +209,7 @@ import_clause ::= IMPORT QUOTEDSTRING  {pin = 1}
 define_clause ::= DEFINE IDENTIFIER ( cmd | func_clause | macro_clause)
 set_clause ::= SET property_name (scalar | func_name)
 register_clause ::= REGISTER QUOTEDSTRING
-private property_name ::= IDENTIFIER ('.' IDENTIFIER)*
+private property_name ::= eid ('.' eid)*  // current hack adding map
 
 realias_clause ::= IDENTIFIER '=' IDENTIFIER
 
@@ -328,7 +329,7 @@ rank_col ::= col_range ( ASC | DESC )?
 
 order_clause ::= ORDER rel BY order_by_clause ( USING func_clause )?
 
-order_by_clause ::= STAR ( ASC | DESC )?
+order_by_clause ::= '*' ( ASC | DESC )?
                 | order_col_list
 
 order_col_list ::= order_col ( ',' order_col )*
@@ -542,6 +543,7 @@ eid_without_columns ::= rel_str_op
     | UNION
     | SPLIT
     | INTO
+    | INPUT
     | IF
     | ALL
     | AS

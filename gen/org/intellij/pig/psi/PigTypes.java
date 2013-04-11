@@ -155,7 +155,7 @@ public interface PigTypes {
   IElementType PIG_C_STYLE_COMMENT = new PigTokenType("C_STYLE_COMMENT");
   IElementType PIG_DATETIME = new PigTokenType("DATETIME");
   IElementType PIG_DCOLON = new PigTokenType("::");
-  IElementType PIG_DECLARE = new PigTokenType("declare");
+  IElementType PIG_DECLARE = new PigTokenType("DECLARE");
   IElementType PIG_DEFAULT = new PigTokenType("default");
   IElementType PIG_DEFINE = new PigTokenType("DEFINE");
   IElementType PIG_DENSE = new PigTokenType("DENSE");

@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface PigDefaultStatement extends PsiElement {
 
   @NotNull
-  List<PigIDENTIFIER> getIDENTIFIERList();
+  List<PigEid> getEidList();
 
   @Nullable
   PigFuncName getFuncName();

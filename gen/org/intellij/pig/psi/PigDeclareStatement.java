@@ -8,15 +8,12 @@ import com.intellij.psi.PsiElement;
 public interface PigDeclareStatement extends PsiElement {
 
   @NotNull
-  List<PigIDENTIFIER> getIDENTIFIERList();
+  List<PigEid> getEidList();
 
   @Nullable
   PigFuncName getFuncName();
 
   @Nullable
   PigScalar getScalar();
-
-  @NotNull
-  PsiElement getDeclare();
 
 }

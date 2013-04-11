@@ -1783,7 +1783,7 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '%'declare property_name (scalar | func_name | EXECCOMMAND)
+  // '%'DECLARE property_name (scalar | func_name | EXECCOMMAND)
   public static boolean declare_statement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "declare_statement")) return false;
     if (!nextTokenIs(builder_, PIG_PERCENT)) return false;
@@ -1983,6 +1983,7 @@ public class PigParser implements PsiParser {
   //     | UNION
   //     | SPLIT
   //     | INTO
+  //     | INPUT
   //     | IF
   //     | ALL
   //     | AS
@@ -2043,6 +2044,7 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, PIG_UNION);
     if (!result_) result_ = consumeToken(builder_, PIG_SPLIT);
     if (!result_) result_ = consumeToken(builder_, PIG_INTO);
+    if (!result_) result_ = consumeToken(builder_, PIG_INPUT);
     if (!result_) result_ = consumeToken(builder_, PIG_IF);
     if (!result_) result_ = consumeToken(builder_, PIG_ALL);
     if (!result_) result_ = consumeToken(builder_, PIG_AS);
@@ -5946,7 +5948,7 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // STAR ( ASC | DESC )?
+  // '*' ( ASC | DESC )?
   //                 | order_col_list
   public static boolean order_by_clause(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "order_by_clause")) return false;
@@ -5965,7 +5967,7 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // STAR ( ASC | DESC )?
+  // '*' ( ASC | DESC )?
   private static boolean order_by_clause_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "order_by_clause_0")) return false;
     boolean result_ = false;
@@ -6564,13 +6566,12 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // IDENTIFIER ('.' IDENTIFIER)*
+  // eid ('.' eid)*
   static boolean property_name(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property_name")) return false;
-    if (!nextTokenIs(builder_, PIG_ID)) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = IDENTIFIER(builder_, level_ + 1);
+    result_ = eid(builder_, level_ + 1);
     result_ = result_ && property_name_1(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
@@ -6581,7 +6582,7 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // ('.' IDENTIFIER)*
+  // ('.' eid)*
   private static boolean property_name_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property_name_1")) return false;
     int offset_ = builder_.getCurrentOffset();
@@ -6597,13 +6598,13 @@ public class PigParser implements PsiParser {
     return true;
   }
 
-  // '.' IDENTIFIER
+  // '.' eid
   private static boolean property_name_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property_name_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, PIG_DOT);
-    result_ = result_ && IDENTIFIER(builder_, level_ + 1);
+    result_ = result_ && eid(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
     }

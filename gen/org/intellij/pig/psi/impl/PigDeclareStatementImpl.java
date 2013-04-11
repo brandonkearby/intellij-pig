@@ -19,8 +19,8 @@ public class PigDeclareStatementImpl extends ASTWrapperPsiElement implements Pig
 
   @Override
   @NotNull
-  public List<PigIDENTIFIER> getIDENTIFIERList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PigIDENTIFIER.class);
+  public List<PigEid> getEidList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PigEid.class);
   }
 
   @Override
@@ -33,12 +33,6 @@ public class PigDeclareStatementImpl extends ASTWrapperPsiElement implements Pig
   @Nullable
   public PigScalar getScalar() {
     return findChildByClass(PigScalar.class);
-  }
-
-  @Override
-  @NotNull
-  public PsiElement getDeclare() {
-    return findNotNullChildByType(PIG_DECLARE);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

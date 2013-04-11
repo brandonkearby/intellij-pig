@@ -19,8 +19,8 @@ public class PigSetClauseImpl extends ASTWrapperPsiElement implements PigSetClau
 
   @Override
   @NotNull
-  public List<PigIDENTIFIER> getIDENTIFIERList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PigIDENTIFIER.class);
+  public List<PigEid> getEidList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PigEid.class);
   }
 
   @Override

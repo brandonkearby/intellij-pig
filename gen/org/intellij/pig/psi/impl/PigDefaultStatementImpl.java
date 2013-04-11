@@ -19,8 +19,8 @@ public class PigDefaultStatementImpl extends ASTWrapperPsiElement implements Pig
 
   @Override
   @NotNull
-  public List<PigIDENTIFIER> getIDENTIFIERList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PigIDENTIFIER.class);
+  public List<PigEid> getEidList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PigEid.class);
   }
 
   @Override
