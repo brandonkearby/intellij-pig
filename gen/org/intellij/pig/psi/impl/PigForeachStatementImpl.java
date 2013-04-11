@@ -18,21 +18,21 @@ public class PigForeachStatementImpl extends ASTWrapperPsiElement implements Pig
   }
 
   @Override
+  @NotNull
+  public PigForeachAssignment getForeachAssignment() {
+    return findNotNullChildByClass(PigForeachAssignment.class);
+  }
+
+  @Override
   @Nullable
-  public PigIDENTIFIER getIDENTIFIER() {
-    return findChildByClass(PigIDENTIFIER.class);
+  public PigForeachGenerateSimple getForeachGenerateSimple() {
+    return findChildByClass(PigForeachGenerateSimple.class);
   }
 
   @Override
   @Nullable
   public PigForeachPlanComplex getForeachPlanComplex() {
     return findChildByClass(PigForeachPlanComplex.class);
-  }
-
-  @Override
-  @Nullable
-  public PigForeachPlanSimple getForeachPlanSimple() {
-    return findChildByClass(PigForeachPlanSimple.class);
   }
 
   @Override

@@ -17,6 +17,12 @@ public class PigScalarImpl extends ASTWrapperPsiElement implements PigScalar {
     super(node);
   }
 
+  @Override
+  @Nullable
+  public PigDOLLARVAR getDOLLARVAR() {
+    return findChildByClass(PigDOLLARVAR.class);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof PigVisitor) ((PigVisitor)visitor).visitScalar(this);
     else super.accept(visitor);

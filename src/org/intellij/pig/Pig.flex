@@ -57,10 +57,13 @@ ID = [:jletter:][:jletterdigit:]*
 SCRIPT_PARAM_NAME = \$[:jletter:][:jletterdigit:]*
 
 /* comments */
-C_STYLE_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
-//DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?
+TRADITIONAL_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
+DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?
 COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 END_OF_LINE_COMMENT="-""-"[^\r\n]*
+
+COMMENT = {TRADITIONAL_COMMENT} | {END_OF_LINE_COMMENT} |{DOC_COMMENT}
+
 
 STRING_LITERAL=\'([^\\\'\r\n]|{ESCAPE_SEQUENCE})*(\'|\\)?
 ESCAPE_SEQUENCE=\\[^\r\n]
@@ -104,6 +107,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "parallel"               { yybegin(YYINITIAL);  return PigTypes.PIG_PARALLEL; }
   "partition"              { yybegin(YYINITIAL);  return PigTypes.PIG_PARTITION; }
   "order"                  { yybegin(YYINITIAL);  return PigTypes.PIG_ORDER; }
+  "onschema"               { yybegin(YYINITIAL);  return PigTypes.PIG_ONSCHEMA; }
   "register"               { yybegin(YYINITIAL);  return PigTypes.PIG_REGISTER; }
   "rank"                   { yybegin(YYINITIAL);  return PigTypes.PIG_RANK; }
   "rollup"                 { yybegin(YYINITIAL);  return PigTypes.PIG_ROLLUP; }
@@ -183,10 +187,14 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "true"                 { yybegin(YYINITIAL);  return PigTypes.PIG_TRUE; }
   "false"                { yybegin(YYINITIAL);  return PigTypes.PIG_FALSE; }
   {STRING_LITERAL}       { yybegin(YYINITIAL);  return PigTypes.PIG_QUOTEDSTRING; }
-  {C_STYLE_COMMENT}      { yybegin(YYINITIAL);  return PigTypes.PIG_C_STYLE_COMMENT; }
   {EXEC_LITERAL}         { yybegin(YYINITIAL);  return PigTypes.PIG_EXECCOMMAND; }
-//  {DOC_COMMENT}        { yybegin(YYINITIAL);  return PigTypes.PIG_DOC_COMMENT; }
-  {END_OF_LINE_COMMENT}  { yybegin(YYINITIAL);  return PigTypes.PIG_END_OF_LINE_COMMENT; }
+
+  /* comments */
+//  // Comments
+  {TRADITIONAL_COMMENT}  { return PigTypes.PIG_TRADITIONAL_COMMENT; }
+  {DOC_COMMENT}          { return PigTypes.PIG_DOC_COMMENT; }
+  {END_OF_LINE_COMMENT}  { return PigTypes.PIG_END_OF_LINE_COMMENT; }
+
   {WHITE_SPACE_CHAR}+    { return TokenType.WHITE_SPACE; }
 
   {ID}           { yybegin(YYINITIAL); return PigTypes.PIG_ID; }

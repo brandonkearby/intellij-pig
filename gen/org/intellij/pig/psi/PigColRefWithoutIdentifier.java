@@ -7,4 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface PigColRefWithoutIdentifier extends PsiElement {
 
+  @Nullable
+  PigDOLLARVAR getDOLLARVAR();
+
 }

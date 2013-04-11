@@ -15,7 +15,7 @@ public class PigTokenType extends IElementType {
     }
 
     public static TokenSet getCommentSet() {
-        return TokenSet.create(PigTypes.PIG_C_STYLE_COMMENT, PigTypes.PIG_END_OF_LINE_COMMENT);
+        return TokenSet.create(PigTypes.PIG_DOC_COMMENT, PigTypes.PIG_TRADITIONAL_COMMENT, PigTypes.PIG_END_OF_LINE_COMMENT);
     }
 
     public PigTokenType(@NotNull @NonNls String debugName) {

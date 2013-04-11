@@ -49,7 +49,7 @@ public class PigCodeFoldingBuilder extends FoldingBuilderEx implements DumbAware
             PsiTreeUtil.processElements(file, new PsiElementProcessor() {
                 @Override
                 public boolean execute(@NotNull PsiElement element) {
-                    if (PigTypes.PIG_C_STYLE_COMMENT.equals(element.getNode().getElementType()) && element.getTextRange().getLength() > 2) {
+                    if (PigTypes.PIG_DOC_COMMENT.equals(element.getNode().getElementType()) && element.getTextRange().getLength() > 2) {
                         result.add(new FoldingDescriptor(element, element.getTextRange()));
                     }
                     return true;
@@ -66,7 +66,7 @@ public class PigCodeFoldingBuilder extends FoldingBuilderEx implements DumbAware
         PsiElement psi = node.getPsi();
 //        if (psi instanceof PigFunction) return PigPsiImplUtil.createFunctionPresentation((PigFunction) psi) + " -> ...";
         IElementType type = node.getElementType();
-        if (PigTypes.PIG_C_STYLE_COMMENT.equals(type)) return "% ...";
+        if (PigTypes.PIG_DOC_COMMENT.equals(type)) return "/.../";
         return null;
     }
 

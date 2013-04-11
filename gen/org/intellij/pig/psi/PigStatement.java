@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface PigStatement extends PsiElement {
 
+  @NotNull
+  List<PigDOLLARVAR> getDOLLARVARList();
+
   @Nullable
   PigIDENTIFIER getIDENTIFIER();
 
@@ -17,10 +20,10 @@ public interface PigStatement extends PsiElement {
   PigDefaultStatement getDefaultStatement();
 
   @Nullable
-  PigForeachPlanComplex getForeachPlanComplex();
+  PigForeachGenerateSimple getForeachGenerateSimple();
 
   @Nullable
-  PigForeachPlanSimple getForeachPlanSimple();
+  PigForeachPlanComplex getForeachPlanComplex();
 
   @Nullable
   PigForeachStatement getForeachStatement();

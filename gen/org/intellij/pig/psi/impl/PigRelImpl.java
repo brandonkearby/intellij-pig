@@ -25,14 +25,14 @@ public class PigRelImpl extends ASTWrapperPsiElement implements PigRel {
 
   @Override
   @Nullable
-  public PigForeachPlanComplex getForeachPlanComplex() {
-    return findChildByClass(PigForeachPlanComplex.class);
+  public PigForeachGenerateSimple getForeachGenerateSimple() {
+    return findChildByClass(PigForeachGenerateSimple.class);
   }
 
   @Override
   @Nullable
-  public PigForeachPlanSimple getForeachPlanSimple() {
-    return findChildByClass(PigForeachPlanSimple.class);
+  public PigForeachPlanComplex getForeachPlanComplex() {
+    return findChildByClass(PigForeachPlanComplex.class);
   }
 
   @Override

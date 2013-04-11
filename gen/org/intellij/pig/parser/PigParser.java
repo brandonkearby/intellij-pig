@@ -23,7 +23,13 @@ public class PigParser implements PsiParser {
     int level_ = 0;
     boolean result_;
     builder_ = adapt_builder_(root_, builder_, this);
-    if (root_ == PIG_IDENTIFIER) {
+    if (root_ == PIG_COMMENT) {
+      result_ = COMMENT(builder_, level_ + 1);
+    }
+    else if (root_ == PIG_DOLLARVAR) {
+      result_ = DOLLARVAR(builder_, level_ + 1);
+    }
+    else if (root_ == PIG_IDENTIFIER) {
       result_ = IDENTIFIER(builder_, level_ + 1);
     }
     else if (root_ == PIG_AFTER_LEFT_PAREN) {
@@ -128,11 +134,14 @@ public class PigParser implements PsiParser {
     else if (root_ == PIG_FLATTEN_GENERATED_ITEM) {
       result_ = flatten_generated_item(builder_, level_ + 1);
     }
+    else if (root_ == PIG_FOREACH_ASSIGNMENT) {
+      result_ = foreach_assignment(builder_, level_ + 1);
+    }
+    else if (root_ == PIG_FOREACH_GENERATE_SIMPLE) {
+      result_ = foreach_generate_simple(builder_, level_ + 1);
+    }
     else if (root_ == PIG_FOREACH_PLAN_COMPLEX) {
       result_ = foreach_plan_complex(builder_, level_ + 1);
-    }
-    else if (root_ == PIG_FOREACH_PLAN_SIMPLE) {
-      result_ = foreach_plan_simple(builder_, level_ + 1);
     }
     else if (root_ == PIG_FOREACH_STATEMENT) {
       result_ = foreach_statement(builder_, level_ + 1);
@@ -395,6 +404,44 @@ public class PigParser implements PsiParser {
 
   protected boolean parse_root_(final IElementType root_, final PsiBuilder builder_, final int level_) {
     return pigFile(builder_, level_ + 1);
+  }
+
+  /* ********************************************************** */
+  // TRADITIONAL_COMMENT | DOC_COMMENT | END_OF_LINE_COMMENT
+  public static boolean COMMENT(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "COMMENT")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<comment>");
+    result_ = consumeToken(builder_, PIG_TRADITIONAL_COMMENT);
+    if (!result_) result_ = consumeToken(builder_, PIG_DOC_COMMENT);
+    if (!result_) result_ = consumeToken(builder_, PIG_END_OF_LINE_COMMENT);
+    if (result_) {
+      marker_.done(PIG_COMMENT);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // '$' INTEGER_LITERAL
+  public static boolean DOLLARVAR(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "DOLLARVAR")) return false;
+    if (!nextTokenIs(builder_, PIG_DOLLAR)) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, PIG_DOLLAR);
+    result_ = result_ && consumeToken(builder_, PIG_INTEGER_LITERAL);
+    if (result_) {
+      marker_.done(PIG_DOLLARVAR);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    return result_;
   }
 
   /* ********************************************************** */
@@ -1434,7 +1481,7 @@ public class PigParser implements PsiParser {
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<col ref without identifier>");
     result_ = consumeToken(builder_, PIG_GROUP);
     if (!result_) result_ = consumeToken(builder_, PIG_CUBE);
-    if (!result_) result_ = consumeToken(builder_, PIG_DOLLARVAR);
+    if (!result_) result_ = DOLLARVAR(builder_, level_ + 1);
     if (result_) {
       marker_.done(PIG_COL_REF_WITHOUT_IDENTIFIER);
     }
@@ -2011,7 +2058,6 @@ public class PigParser implements PsiParser {
   //     | MAPREDUCE
   //     | SHIP
   //     | CACHE
-  //     | INPUT
   //     | OUTPUT
   //     | STDERROR
   //     | STDIN
@@ -2072,7 +2118,6 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, PIG_MAPREDUCE);
     if (!result_) result_ = consumeToken(builder_, PIG_SHIP);
     if (!result_) result_ = consumeToken(builder_, PIG_CACHE);
-    if (!result_) result_ = consumeToken(builder_, PIG_INPUT);
     if (!result_) result_ = consumeToken(builder_, PIG_OUTPUT);
     if (!result_) result_ = consumeToken(builder_, PIG_STDERROR);
     if (!result_) result_ = consumeToken(builder_, PIG_STDIN);
@@ -2699,6 +2744,99 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // '=>' | ( IDENTIFIER '=' )?
+  public static boolean foreach_assignment(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_assignment")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<foreach assignment>");
+    result_ = consumeToken(builder_, "=>");
+    if (!result_) result_ = foreach_assignment_1(builder_, level_ + 1);
+    if (result_) {
+      marker_.done(PIG_FOREACH_ASSIGNMENT);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
+    return result_;
+  }
+
+  // ( IDENTIFIER '=' )?
+  private static boolean foreach_assignment_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_assignment_1")) return false;
+    foreach_assignment_1_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // IDENTIFIER '='
+  private static boolean foreach_assignment_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_assignment_1_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = IDENTIFIER(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, PIG_EQUAL);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // GENERATE flatten_generated_item ( ',' flatten_generated_item )*
+  public static boolean foreach_generate_simple(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_generate_simple")) return false;
+    if (!nextTokenIs(builder_, PIG_GENERATE)) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, PIG_GENERATE);
+    result_ = result_ && flatten_generated_item(builder_, level_ + 1);
+    result_ = result_ && foreach_generate_simple_2(builder_, level_ + 1);
+    if (result_) {
+      marker_.done(PIG_FOREACH_GENERATE_SIMPLE);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    return result_;
+  }
+
+  // ( ',' flatten_generated_item )*
+  private static boolean foreach_generate_simple_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_generate_simple_2")) return false;
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!foreach_generate_simple_2_0(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "foreach_generate_simple_2");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    return true;
+  }
+
+  // ',' flatten_generated_item
+  private static boolean foreach_generate_simple_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_generate_simple_2_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, PIG_COMMA);
+    result_ = result_ && flatten_generated_item(builder_, level_ + 1);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    return result_;
+  }
+
+  /* ********************************************************** */
   // '{' nested_blk '}'
   public static boolean foreach_plan_complex(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "foreach_plan_complex")) return false;
@@ -2718,66 +2856,16 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // GENERATE flatten_generated_item ( ',' flatten_generated_item )*
-  public static boolean foreach_plan_simple(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_plan_simple")) return false;
-    if (!nextTokenIs(builder_, PIG_GENERATE)) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, PIG_GENERATE);
-    result_ = result_ && flatten_generated_item(builder_, level_ + 1);
-    result_ = result_ && foreach_plan_simple_2(builder_, level_ + 1);
-    if (result_) {
-      marker_.done(PIG_FOREACH_PLAN_SIMPLE);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    return result_;
-  }
-
-  // ( ',' flatten_generated_item )*
-  private static boolean foreach_plan_simple_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_plan_simple_2")) return false;
-    int offset_ = builder_.getCurrentOffset();
-    while (true) {
-      if (!foreach_plan_simple_2_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "foreach_plan_simple_2");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    return true;
-  }
-
-  // ',' flatten_generated_item
-  private static boolean foreach_plan_simple_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_plan_simple_2_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, PIG_COMMA);
-    result_ = result_ && flatten_generated_item(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // '=>' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
-  //                   | ( IDENTIFIER '=' )? FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
+  // foreach_assignment FOREACH rel ( foreach_plan_complex | ( foreach_generate_simple parallel_clause? ';' ) )
   public static boolean foreach_statement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "foreach_statement")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<foreach statement>");
-    result_ = foreach_statement_0(builder_, level_ + 1);
-    if (!result_) result_ = foreach_statement_1(builder_, level_ + 1);
+    result_ = foreach_assignment(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, PIG_FOREACH);
+    result_ = result_ && rel(builder_, level_ + 1);
+    result_ = result_ && foreach_statement_3(builder_, level_ + 1);
     if (result_) {
       marker_.done(PIG_FOREACH_STATEMENT);
     }
@@ -2788,31 +2876,13 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // '=>' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
-  private static boolean foreach_statement_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, "=>");
-    result_ = result_ && consumeToken(builder_, PIG_FOREACH);
-    result_ = result_ && rel(builder_, level_ + 1);
-    result_ = result_ && foreach_statement_0_3(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  // foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' )
-  private static boolean foreach_statement_0_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_0_3")) return false;
+  // foreach_plan_complex | ( foreach_generate_simple parallel_clause? ';' )
+  private static boolean foreach_statement_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_statement_3")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = foreach_plan_complex(builder_, level_ + 1);
-    if (!result_) result_ = foreach_statement_0_3_1(builder_, level_ + 1);
+    if (!result_) result_ = foreach_statement_3_1(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
     }
@@ -2822,13 +2892,13 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // foreach_plan_simple parallel_clause? ';'
-  private static boolean foreach_statement_0_3_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_0_3_1")) return false;
+  // foreach_generate_simple parallel_clause? ';'
+  private static boolean foreach_statement_3_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_statement_3_1")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = foreach_plan_simple(builder_, level_ + 1);
-    result_ = result_ && foreach_statement_0_3_1_1(builder_, level_ + 1);
+    result_ = foreach_generate_simple(builder_, level_ + 1);
+    result_ = result_ && foreach_statement_3_1_1(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, PIG_SIMI);
     if (!result_) {
       marker_.rollbackTo();
@@ -2840,89 +2910,8 @@ public class PigParser implements PsiParser {
   }
 
   // parallel_clause?
-  private static boolean foreach_statement_0_3_1_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_0_3_1_1")) return false;
-    parallel_clause(builder_, level_ + 1);
-    return true;
-  }
-
-  // ( IDENTIFIER '=' )? FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
-  private static boolean foreach_statement_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_1")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = foreach_statement_1_0(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, PIG_FOREACH);
-    result_ = result_ && rel(builder_, level_ + 1);
-    result_ = result_ && foreach_statement_1_3(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  // ( IDENTIFIER '=' )?
-  private static boolean foreach_statement_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_1_0")) return false;
-    foreach_statement_1_0_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // IDENTIFIER '='
-  private static boolean foreach_statement_1_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_1_0_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = IDENTIFIER(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, PIG_EQUAL);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  // foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' )
-  private static boolean foreach_statement_1_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_1_3")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = foreach_plan_complex(builder_, level_ + 1);
-    if (!result_) result_ = foreach_statement_1_3_1(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  // foreach_plan_simple parallel_clause? ';'
-  private static boolean foreach_statement_1_3_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_1_3_1")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = foreach_plan_simple(builder_, level_ + 1);
-    result_ = result_ && foreach_statement_1_3_1_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, PIG_SIMI);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
-  }
-
-  // parallel_clause?
-  private static boolean foreach_statement_1_3_1_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "foreach_statement_1_3_1_1")) return false;
+  private static boolean foreach_statement_3_1_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "foreach_statement_3_1_1")) return false;
     parallel_clause(builder_, level_ + 1);
     return true;
   }
@@ -3078,7 +3067,7 @@ public class PigParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, PIG_DOT);
-    if (!result_) result_ = consumeToken(builder_, PIG_DOLLARVAR);
+    if (!result_) result_ = consumeToken(builder_, PIG_DOLLAR);
     if (!result_) {
       marker_.rollbackTo();
     }
@@ -3092,7 +3081,7 @@ public class PigParser implements PsiParser {
   // ( ( '$' | '.' ) eid )+
   public static boolean func_name_suffix(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "func_name_suffix")) return false;
-    if (!nextTokenIs(builder_, PIG_DOLLARVAR) && !nextTokenIs(builder_, PIG_DOT)
+    if (!nextTokenIs(builder_, PIG_DOLLAR) && !nextTokenIs(builder_, PIG_DOT)
         && replaceVariants(builder_, 2, "<func name suffix>")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
@@ -3139,7 +3128,7 @@ public class PigParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "func_name_suffix_0_0")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, PIG_DOLLARVAR);
+    result_ = consumeToken(builder_, PIG_DOLLAR);
     if (!result_) result_ = consumeToken(builder_, PIG_DOT);
     if (!result_) {
       marker_.rollbackTo();
@@ -3226,7 +3215,7 @@ public class PigParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, PIG_DOT);
-    if (!result_) result_ = consumeToken(builder_, PIG_DOLLARVAR);
+    if (!result_) result_ = consumeToken(builder_, PIG_DOLLAR);
     if (!result_) {
       marker_.rollbackTo();
     }
@@ -5616,7 +5605,7 @@ public class PigParser implements PsiParser {
 
   /* ********************************************************** */
   // '(' op_clause parallel_clause? ')'
-  //                  | '(' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ) ) ')'
+  //                            | '(' FOREACH rel ( foreach_plan_complex | ( foreach_generate_simple parallel_clause? ) ) ')'
   static boolean nested_op_clause(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nested_op_clause")) return false;
     if (!nextTokenIs(builder_, PIG_LP)) return false;
@@ -5658,7 +5647,7 @@ public class PigParser implements PsiParser {
     return true;
   }
 
-  // '(' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ) ) ')'
+  // '(' FOREACH rel ( foreach_plan_complex | ( foreach_generate_simple parallel_clause? ) ) ')'
   private static boolean nested_op_clause_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nested_op_clause_1")) return false;
     boolean result_ = false;
@@ -5677,7 +5666,7 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // foreach_plan_complex | ( foreach_plan_simple parallel_clause? )
+  // foreach_plan_complex | ( foreach_generate_simple parallel_clause? )
   private static boolean nested_op_clause_1_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nested_op_clause_1_3")) return false;
     boolean result_ = false;
@@ -5693,12 +5682,12 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // foreach_plan_simple parallel_clause?
+  // foreach_generate_simple parallel_clause?
   private static boolean nested_op_clause_1_3_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nested_op_clause_1_3_1")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = foreach_plan_simple(builder_, level_ + 1);
+    result_ = foreach_generate_simple(builder_, level_ + 1);
     result_ = result_ && nested_op_clause_1_3_1_1(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
@@ -6315,7 +6304,7 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, PIG_BIGDECIMALNUMBER);
     if (!result_) result_ = consumeToken(builder_, PIG_BIGINTEGERNUMBER);
     if (!result_) result_ = consumeToken(builder_, PIG_QUOTEDSTRING);
-    if (!result_) result_ = consumeToken(builder_, PIG_DOLLARVAR);
+    if (!result_) result_ = DOLLARVAR(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, PIG_SCRIPT_PARAM_NAME);
     if (!result_) {
       marker_.rollbackTo();
@@ -7117,6 +7106,7 @@ public class PigParser implements PsiParser {
   //        | TRUE
   //        | FALSE
   //        | SCRIPT_PARAM_NAME
+  //        | DOLLARVAR
   public static boolean scalar(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "scalar")) return false;
     boolean result_ = false;
@@ -7131,6 +7121,7 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, PIG_TRUE);
     if (!result_) result_ = consumeToken(builder_, PIG_FALSE);
     if (!result_) result_ = consumeToken(builder_, PIG_SCRIPT_PARAM_NAME);
+    if (!result_) result_ = DOLLARVAR(builder_, level_ + 1);
     if (result_) {
       marker_.done(PIG_SCALAR);
     }
@@ -7623,7 +7614,7 @@ public class PigParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // stream_cmd ( COMMA stream_cmd )*
+  // stream_cmd ( ',' stream_cmd )*
   public static boolean stream_cmd_list(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stream_cmd_list")) return false;
     boolean result_ = false;
@@ -7641,7 +7632,7 @@ public class PigParser implements PsiParser {
     return result_;
   }
 
-  // ( COMMA stream_cmd )*
+  // ( ',' stream_cmd )*
   private static boolean stream_cmd_list_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stream_cmd_list_1")) return false;
     int offset_ = builder_.getCurrentOffset();
@@ -7657,7 +7648,7 @@ public class PigParser implements PsiParser {
     return true;
   }
 
-  // COMMA stream_cmd
+  // ',' stream_cmd
   private static boolean stream_cmd_list_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stream_cmd_list_1_0")) return false;
     boolean result_ = false;

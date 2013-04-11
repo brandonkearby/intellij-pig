@@ -35,7 +35,8 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
 
     public static final TextAttributesKey ILLEGAL = createTextAttributesKey("PIG_ILLEGAL", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
     public static final TextAttributesKey LINE_COMMENT = createTextAttributesKey("PIG_LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
-    public static final TextAttributesKey BLOCK_COMMENT = createTextAttributesKey("PIG_BLOCK_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
+    public static final TextAttributesKey BLOCK_COMMENT = createTextAttributesKey("PIG_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
+    public static final TextAttributesKey DOC_COMMENT = createTextAttributesKey("PIG_DOC_COMMENT", DefaultLanguageHighlighterColors.DOC_COMMENT);
     public static final TextAttributesKey STRING = createTextAttributesKey("PIG_STRING", DefaultLanguageHighlighterColors.STRING);
     public static final TextAttributesKey NUMBER = createTextAttributesKey("PIG_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
     public static final TextAttributesKey KEYWORD = createTextAttributesKey("PIG_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
@@ -92,6 +93,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_NULL);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_ORDER);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_OTHERWISE);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_ONSCHEMA);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_MAPREDUCE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_PARALLEL);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_PARTITION);
@@ -139,11 +141,14 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         if (type == TokenType.BAD_CHARACTER) {
             return pack(ILLEGAL);
         }
-        if (type == PigTypes.PIG_C_STYLE_COMMENT) {
+        if (type == PigTypes.PIG_TRADITIONAL_COMMENT) {
             return pack(BLOCK_COMMENT);
         }
         if (type == PigTypes.PIG_END_OF_LINE_COMMENT) {
             return pack(LINE_COMMENT);
+        }
+        if (type == PigTypes.PIG_DOC_COMMENT) {
+            return pack(DOC_COMMENT);
         }
         if (type == PigTypes.PIG_QUOTEDSTRING) {
             return pack(STRING);

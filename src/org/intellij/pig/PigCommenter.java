@@ -57,19 +57,19 @@ public class PigCommenter implements CodeDocumentationAwareCommenter {
     @Nullable
     @Override
     public IElementType getBlockCommentTokenType() {
-        return PigTypes.PIG_C_STYLE_COMMENT;
+        return PigTypes.PIG_TRADITIONAL_COMMENT;
     }
 
     @Nullable
     @Override
     public IElementType getDocumentationCommentTokenType() {
-        return null;
+        return PigTypes.PIG_DOC_COMMENT;
     }
 
     @Nullable
     @Override
     public String getDocumentationCommentPrefix() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return "/**";
     }
 
     @Nullable
@@ -81,11 +81,11 @@ public class PigCommenter implements CodeDocumentationAwareCommenter {
     @Nullable
     @Override
     public String getDocumentationCommentSuffix() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return "*/";
     }
 
     @Override
     public boolean isDocumentationComment(PsiComment element) {
-        return element.getText().startsWith(getDocumentationCommentPrefix());
+        return element.getText().startsWith(getDocumentationCommentPrefix()) || element.getText().startsWith(getBlockCommentPrefix());
     }
 }

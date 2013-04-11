@@ -18,6 +18,7 @@ public interface PigTypes {
   IElementType PIG_COL_REF = new PigElementType("PIG_COL_REF");
   IElementType PIG_COL_REF_LIST = new PigElementType("PIG_COL_REF_LIST");
   IElementType PIG_COL_REF_WITHOUT_IDENTIFIER = new PigElementType("PIG_COL_REF_WITHOUT_IDENTIFIER");
+  IElementType PIG_COMMENT = new PigElementType("PIG_COMMENT");
   IElementType PIG_COND = new PigElementType("PIG_COND");
   IElementType PIG_CROSS_CLAUSE = new PigElementType("PIG_CROSS_CLAUSE");
   IElementType PIG_CUBE_CLAUSE = new PigElementType("PIG_CUBE_CLAUSE");
@@ -27,6 +28,7 @@ public interface PigTypes {
   IElementType PIG_DEFAULT_STATEMENT = new PigElementType("PIG_DEFAULT_STATEMENT");
   IElementType PIG_DEFINE_CLAUSE = new PigElementType("PIG_DEFINE_CLAUSE");
   IElementType PIG_DISTINCT_CLAUSE = new PigElementType("PIG_DISTINCT_CLAUSE");
+  IElementType PIG_DOLLARVAR = new PigElementType("PIG_DOLLARVAR");
   IElementType PIG_EID = new PigElementType("PIG_EID");
   IElementType PIG_EID_WITHOUT_COLUMNS = new PigElementType("PIG_EID_WITHOUT_COLUMNS");
   IElementType PIG_ERROR_CLAUSE = new PigElementType("PIG_ERROR_CLAUSE");
@@ -42,8 +44,9 @@ public interface PigTypes {
   IElementType PIG_FILTER_CLAUSE = new PigElementType("PIG_FILTER_CLAUSE");
   IElementType PIG_FLATTEN_CLAUSE = new PigElementType("PIG_FLATTEN_CLAUSE");
   IElementType PIG_FLATTEN_GENERATED_ITEM = new PigElementType("PIG_FLATTEN_GENERATED_ITEM");
+  IElementType PIG_FOREACH_ASSIGNMENT = new PigElementType("PIG_FOREACH_ASSIGNMENT");
+  IElementType PIG_FOREACH_GENERATE_SIMPLE = new PigElementType("PIG_FOREACH_GENERATE_SIMPLE");
   IElementType PIG_FOREACH_PLAN_COMPLEX = new PigElementType("PIG_FOREACH_PLAN_COMPLEX");
-  IElementType PIG_FOREACH_PLAN_SIMPLE = new PigElementType("PIG_FOREACH_PLAN_SIMPLE");
   IElementType PIG_FOREACH_STATEMENT = new PigElementType("PIG_FOREACH_STATEMENT");
   IElementType PIG_FUNC_ARGS = new PigElementType("PIG_FUNC_ARGS");
   IElementType PIG_FUNC_ARGS_STRING = new PigElementType("PIG_FUNC_ARGS_STRING");
@@ -152,7 +155,6 @@ public interface PigTypes {
   IElementType PIG_COMMA = new PigTokenType(",");
   IElementType PIG_CROSS = new PigTokenType("CROSS");
   IElementType PIG_CUBE = new PigTokenType("CUBE");
-  IElementType PIG_C_STYLE_COMMENT = new PigTokenType("C_STYLE_COMMENT");
   IElementType PIG_DATETIME = new PigTokenType("DATETIME");
   IElementType PIG_DCOLON = new PigTokenType("::");
   IElementType PIG_DECLARE = new PigTokenType("DECLARE");
@@ -162,7 +164,8 @@ public interface PigTypes {
   IElementType PIG_DESC = new PigTokenType("DESC");
   IElementType PIG_DISTINCT = new PigTokenType("DISTINCT");
   IElementType PIG_DIV = new PigTokenType("/");
-  IElementType PIG_DOLLARVAR = new PigTokenType("$");
+  IElementType PIG_DOC_COMMENT = new PigTokenType("DOC_COMMENT");
+  IElementType PIG_DOLLAR = new PigTokenType("$");
   IElementType PIG_DOT = new PigTokenType(".");
   IElementType PIG_DOUBLE = new PigTokenType("DOUBLE");
   IElementType PIG_DOUBLENUMBER = new PigTokenType("DOUBLENUMBER");
@@ -256,6 +259,7 @@ public interface PigTypes {
   IElementType PIG_STR_OP_MATCHES = new PigTokenType("STR_OP_MATCHES");
   IElementType PIG_STR_OP_NE = new PigTokenType("ne");
   IElementType PIG_THROUGH = new PigTokenType("THROUGH");
+  IElementType PIG_TRADITIONAL_COMMENT = new PigTokenType("TRADITIONAL_COMMENT");
   IElementType PIG_TRUE = new PigTokenType("TRUE");
   IElementType PIG_TUPLE = new PigTokenType("tuple");
   IElementType PIG_UNION = new PigTokenType("UNION");
@@ -295,6 +299,9 @@ public interface PigTypes {
       else if (type == PIG_COL_REF_WITHOUT_IDENTIFIER) {
         return new PigColRefWithoutIdentifierImpl(node);
       }
+      else if (type == PIG_COMMENT) {
+        return new PigCOMMENTImpl(node);
+      }
       else if (type == PIG_COND) {
         return new PigCondImpl(node);
       }
@@ -321,6 +328,9 @@ public interface PigTypes {
       }
       else if (type == PIG_DISTINCT_CLAUSE) {
         return new PigDistinctClauseImpl(node);
+      }
+      else if (type == PIG_DOLLARVAR) {
+        return new PigDOLLARVARImpl(node);
       }
       else if (type == PIG_EID) {
         return new PigEidImpl(node);
@@ -367,11 +377,14 @@ public interface PigTypes {
       else if (type == PIG_FLATTEN_GENERATED_ITEM) {
         return new PigFlattenGeneratedItemImpl(node);
       }
+      else if (type == PIG_FOREACH_ASSIGNMENT) {
+        return new PigForeachAssignmentImpl(node);
+      }
+      else if (type == PIG_FOREACH_GENERATE_SIMPLE) {
+        return new PigForeachGenerateSimpleImpl(node);
+      }
       else if (type == PIG_FOREACH_PLAN_COMPLEX) {
         return new PigForeachPlanComplexImpl(node);
-      }
-      else if (type == PIG_FOREACH_PLAN_SIMPLE) {
-        return new PigForeachPlanSimpleImpl(node);
       }
       else if (type == PIG_FOREACH_STATEMENT) {
         return new PigForeachStatementImpl(node);

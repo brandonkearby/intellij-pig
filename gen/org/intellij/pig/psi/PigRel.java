@@ -11,10 +11,10 @@ public interface PigRel extends PsiElement {
   PigIDENTIFIER getIDENTIFIER();
 
   @Nullable
-  PigForeachPlanComplex getForeachPlanComplex();
+  PigForeachGenerateSimple getForeachGenerateSimple();
 
   @Nullable
-  PigForeachPlanSimple getForeachPlanSimple();
+  PigForeachPlanComplex getForeachPlanComplex();
 
   @Nullable
   PigOpClause getOpClause();

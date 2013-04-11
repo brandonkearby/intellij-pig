@@ -84,16 +84,19 @@ tokens = [
  ID = 'regexp:\p{Alpha}\w*'
 // IDENTIFIER = 'regexp:\p{Alpha}\w*'
  SCRIPT_PARAM_NAME = 'regexp:\$\p{Alpha}\w*'
- DOLLARVAR = '$' INTEGER_LITERAL
  DCOLON = '::'
 
 
   QUOTEDSTRING="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
-  C_STYLE_COMMENT="regexp:/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
-//  DOC_COMMENT="regexp:/\*\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
+
+  // Comments
+  TRADITIONAL_COMMENT="regexp:/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
+  DOC_COMMENT="regexp:/\*\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
   END_OF_LINE_COMMENT="regexp:--.*"
-  integer_literal="regexp:[0-9]+"
-  long_literal="regexp:[0-9]+[Ll]"
+
+
+  INTEGER_LITERAL="regexp:[0-9]+"
+  LONG_LITERAL="regexp:[0-9]+[Ll]"
 
 ]
 
@@ -103,7 +106,8 @@ tokens = [
 pigFile ::= statement*
 
 IDENTIFIER ::= ID ('::' ID)*
-
+ DOLLARVAR ::= '$' INTEGER_LITERAL
+COMMENT ::= TRADITIONAL_COMMENT | DOC_COMMENT | END_OF_LINE_COMMENT
 statement ::= empty_statement
             | foreach_statement
             | general_statement ';'
@@ -123,7 +127,7 @@ default_statement ::= '%'default property_name (scalar | func_name | EXECCOMMAND
 
 
 private nested_op_clause ::= '(' op_clause parallel_clause? ')'
-                 | '(' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ) ) ')'
+                           | '(' FOREACH rel ( foreach_plan_complex | ( foreach_generate_simple parallel_clause? ) ) ')'
 
 private general_statement ::= identifier_assignment? (( op_clause parallel_clause? ) | nested_op_clause )
 
@@ -132,12 +136,12 @@ private identifier_assignment ::= (IDENTIFIER '=') | ('=>')
 // is covered by general_statement.
 // We need to handle foreach specifically because of the ending ';', which is not required
 // if there is a nested block. This is ugly, but it gets the job done.
-foreach_statement ::= '=>' FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
-                  | ( IDENTIFIER '=' )? FOREACH rel ( foreach_plan_complex | ( foreach_plan_simple parallel_clause? ';' ) )
+foreach_statement ::= foreach_assignment FOREACH rel ( foreach_plan_complex | ( foreach_generate_simple parallel_clause? ';' ) )
 
+foreach_assignment ::= '=>' | ( IDENTIFIER '=' )?
 foreach_plan_complex ::= '{' nested_blk '}'
 
-foreach_plan_simple ::= GENERATE flatten_generated_item ( ',' flatten_generated_item )*
+foreach_generate_simple ::= GENERATE flatten_generated_item ( ',' flatten_generated_item )*
 
 
 // MACRO grammar
@@ -287,7 +291,7 @@ as_clause ::= AS ( explicit_field_def | ( '(' field_def_list? ')' ) )
 
 // OTHERS
 
-stream_cmd_list ::= stream_cmd ( COMMA stream_cmd )*
+stream_cmd_list ::= stream_cmd ( ',' stream_cmd )*
 
 stream_cmd ::= ( STDIN | STDOUT | QUOTEDSTRING ) ( USING func_clause )?
 
@@ -399,7 +403,6 @@ multi_expr ::= cast_expr ( ( '*' | '/' | '%' ) cast_expr )*
 
 func_name_suffix ::= ( ( '$' | '.' ) eid )+
 
-//cast_expr ::= ('(' type|function_name_with_columns ')')? cast_expr2
 cast_expr
           ::=
             identifier_with_function
@@ -475,6 +478,7 @@ scalar ::= INTEGER_LITERAL
        | TRUE
        | FALSE
        | SCRIPT_PARAM_NAME
+       | DOLLARVAR
 keyvalue ::= QUOTEDSTRING '#' literal
 
 literal_map ::= '[' keyvalue ( ',' keyvalue )* ']'
@@ -571,7 +575,6 @@ eid_without_columns ::= rel_str_op
     | MAPREDUCE
     | SHIP
     | CACHE
-    | INPUT
     | OUTPUT
     | STDERROR
     | STDIN

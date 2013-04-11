@@ -200,6 +200,16 @@
     </java>
   </target>
 
+  <target name='grammarKit' description="Builds PigParser">
+
+    <java classpathref="pig-plugin.module.production.classpath" jar="lib/grammar-kit.jar" fork="true" failonerror="true">
+
+      <arg value="./gen/org/intellij/pig"/>
+      <arg value="src/org/intellij/pig/Pig.bnf"/>
+
+    </java>
+  </target>
+
 
   <target name="clean" depends="clean.module.pig-plugin" description="cleanup all"/>
   

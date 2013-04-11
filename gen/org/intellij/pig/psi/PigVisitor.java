@@ -7,6 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public class PigVisitor extends PsiElementVisitor {
 
+  public void visitCOMMENT(@NotNull PigCOMMENT o) {
+    visitPsiElement(o);
+  }
+
+  public void visitDOLLARVAR(@NotNull PigDOLLARVAR o) {
+    visitPsiElement(o);
+  }
+
   public void visitIDENTIFIER(@NotNull PigIDENTIFIER o) {
     visitPsiElement(o);
   }
@@ -147,11 +155,15 @@ public class PigVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitForeachPlanComplex(@NotNull PigForeachPlanComplex o) {
+  public void visitForeachAssignment(@NotNull PigForeachAssignment o) {
     visitPsiElement(o);
   }
 
-  public void visitForeachPlanSimple(@NotNull PigForeachPlanSimple o) {
+  public void visitForeachGenerateSimple(@NotNull PigForeachGenerateSimple o) {
+    visitPsiElement(o);
+  }
+
+  public void visitForeachPlanComplex(@NotNull PigForeachPlanComplex o) {
     visitPsiElement(o);
   }
 

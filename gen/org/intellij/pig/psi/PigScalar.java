@@ -7,4 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface PigScalar extends PsiElement {
 
+  @Nullable
+  PigDOLLARVAR getDOLLARVAR();
+
 }

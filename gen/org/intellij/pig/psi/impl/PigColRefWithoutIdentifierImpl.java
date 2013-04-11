@@ -17,6 +17,12 @@ public class PigColRefWithoutIdentifierImpl extends ASTWrapperPsiElement impleme
     super(node);
   }
 
+  @Override
+  @Nullable
+  public PigDOLLARVAR getDOLLARVAR() {
+    return findChildByClass(PigDOLLARVAR.class);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof PigVisitor) ((PigVisitor)visitor).visitColRefWithoutIdentifier(this);
     else super.accept(visitor);

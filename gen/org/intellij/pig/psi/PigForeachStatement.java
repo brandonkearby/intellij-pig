@@ -7,14 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface PigForeachStatement extends PsiElement {
 
+  @NotNull
+  PigForeachAssignment getForeachAssignment();
+
   @Nullable
-  PigIDENTIFIER getIDENTIFIER();
+  PigForeachGenerateSimple getForeachGenerateSimple();
 
   @Nullable
   PigForeachPlanComplex getForeachPlanComplex();
-
-  @Nullable
-  PigForeachPlanSimple getForeachPlanSimple();
 
   @Nullable
   PigParallelClause getParallelClause();

@@ -18,6 +18,12 @@ public class PigStatementImpl extends ASTWrapperPsiElement implements PigStateme
   }
 
   @Override
+  @NotNull
+  public List<PigDOLLARVAR> getDOLLARVARList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PigDOLLARVAR.class);
+  }
+
+  @Override
   @Nullable
   public PigIDENTIFIER getIDENTIFIER() {
     return findChildByClass(PigIDENTIFIER.class);
@@ -37,14 +43,14 @@ public class PigStatementImpl extends ASTWrapperPsiElement implements PigStateme
 
   @Override
   @Nullable
-  public PigForeachPlanComplex getForeachPlanComplex() {
-    return findChildByClass(PigForeachPlanComplex.class);
+  public PigForeachGenerateSimple getForeachGenerateSimple() {
+    return findChildByClass(PigForeachGenerateSimple.class);
   }
 
   @Override
   @Nullable
-  public PigForeachPlanSimple getForeachPlanSimple() {
-    return findChildByClass(PigForeachPlanSimple.class);
+  public PigForeachPlanComplex getForeachPlanComplex() {
+    return findChildByClass(PigForeachPlanComplex.class);
   }
 
   @Override
