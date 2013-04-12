@@ -391,12 +391,12 @@ real_arg ::= expr
          | '*'
          | col_range
 
-cond ::=  not_cond ( (AND|OR) cond )*
+cond ::=  not_cond ( (AND|OR) not_cond )*
 
 not_cond  ::= (NOT)? unary_cond
 
 
-unary_cond ::= expr ( ( IS (NOT)? NULL ) | ( rel_op expr ) )
+unary_cond ::= expr ( ( IS (NOT)? NULL ) | ( rel_op expr ) )?
 
 
 expr ::= multi_expr ( ( '+' | '-' ) multi_expr )*
@@ -443,13 +443,12 @@ after_left_paren ::= explicit_type_cast ')' cast_expr /*-> ^( CAST_EXPR explicit
                  // and expr are indistinguishable, we'll parse as a cond (i.e. the most lenient) and
                  // for exprs, strip off the BOOL_COND trees. You can have both nested conds and nested
                  // exprs, so we'll just assume cond.
-                 | (unary_cond|expr)
-                   ( ( ( ',' real_arg )+ ')' projection* /*-> ^( FUNC_EVAL TOTUPLE cond real_arg+ ) projection* */)
-                   | ( ')' /*-> ^( EXPR_IN_PAREN cond )*/ )
-                   | ( '?' expr ':' expr ')' /*-> ^( BIN_EXPR cond $exp1 $exp2 )*/ ) )
+                 | (cond)
+                   ( ( ( ',' real_arg )+ ')' projection*
+                   | ( ')' )
+                   | ( '?' expr ':' expr ')') ))
 ;
 
-//paren_expr ::= '(' (expr|cond)* ')'
 
 curly_expr ::= '{' real_arg ( ',' real_arg )* '}' projection*
            | '{' '}' projection*
@@ -499,8 +498,8 @@ literal ::= scalar | literal_map | literal_bag | literal_tuple
 
 nested_blk ::= ( nested_command ';' )* GENERATE flatten_generated_item ( ',' flatten_generated_item )* ';'
 
-nested_command ::= ( IDENTIFIER '=' col_ref '.' col_ref_list { input'.'LA( 1 ) '==' ';' }? ) '=>' ( IDENTIFIER '=' nested_proj )
-               | IDENTIFIER '=' expr
+nested_command ::=/* ( IDENTIFIER '=' col_ref '.' col_ref_list { input'.'LA( 1 ) '==' ';' }? ) '=>' ( IDENTIFIER '=' nested_proj )*/
+                IDENTIFIER '=' cond
                | IDENTIFIER '=' nested_op
 
 nested_op ::= nested_filter
