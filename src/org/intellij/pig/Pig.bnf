@@ -239,7 +239,9 @@ op_clause ::= define_clause
           | mr_clause
           | set_clause
           | register_clause
-          | DUMP
+          | dump_clause
+
+dump_clause ::= DUMP IDENTIFIER;
 
 ship_clause ::= SHIP '(' path_list? ')'
 

@@ -29,6 +29,7 @@ public interface PigTypes {
   IElementType PIG_DEFINE_CLAUSE = new PigElementType("PIG_DEFINE_CLAUSE");
   IElementType PIG_DISTINCT_CLAUSE = new PigElementType("PIG_DISTINCT_CLAUSE");
   IElementType PIG_DOLLARVAR = new PigElementType("PIG_DOLLARVAR");
+  IElementType PIG_DUMP_CLAUSE = new PigElementType("PIG_DUMP_CLAUSE");
   IElementType PIG_EID = new PigElementType("PIG_EID");
   IElementType PIG_EID_WITHOUT_COLUMNS = new PigElementType("PIG_EID_WITHOUT_COLUMNS");
   IElementType PIG_ERROR_CLAUSE = new PigElementType("PIG_ERROR_CLAUSE");
@@ -331,6 +332,9 @@ public interface PigTypes {
       }
       else if (type == PIG_DOLLARVAR) {
         return new PigDOLLARVARImpl(node);
+      }
+      else if (type == PIG_DUMP_CLAUSE) {
+        return new PigDumpClauseImpl(node);
       }
       else if (type == PIG_EID) {
         return new PigEidImpl(node);

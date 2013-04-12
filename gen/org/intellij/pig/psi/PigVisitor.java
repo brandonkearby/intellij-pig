@@ -95,6 +95,10 @@ public class PigVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitDumpClause(@NotNull PigDumpClause o) {
+    visitPsiElement(o);
+  }
+
   public void visitEid(@NotNull PigEid o) {
     visitPsiElement(o);
   }

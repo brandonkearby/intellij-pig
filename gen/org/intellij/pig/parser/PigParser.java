@@ -89,6 +89,9 @@ public class PigParser implements PsiParser {
     else if (root_ == PIG_DISTINCT_CLAUSE) {
       result_ = distinct_clause(builder_, level_ + 1);
     }
+    else if (root_ == PIG_DUMP_CLAUSE) {
+      result_ = dump_clause(builder_, level_ + 1);
+    }
     else if (root_ == PIG_EID) {
       result_ = eid(builder_, level_ + 1);
     }
@@ -1963,6 +1966,24 @@ public class PigParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "distinct_clause_2")) return false;
     partition_clause(builder_, level_ + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // DUMP IDENTIFIER
+  public static boolean dump_clause(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "dump_clause")) return false;
+    if (!nextTokenIs(builder_, PIG_DUMP)) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, PIG_DUMP);
+    result_ = result_ && IDENTIFIER(builder_, level_ + 1);
+    if (result_) {
+      marker_.done(PIG_DUMP_CLAUSE);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    return result_;
   }
 
   /* ********************************************************** */
@@ -5900,7 +5921,7 @@ public class PigParser implements PsiParser {
   //           | mr_clause
   //           | set_clause
   //           | register_clause
-  //           | DUMP
+  //           | dump_clause
   public static boolean op_clause(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "op_clause")) return false;
     boolean result_ = false;
@@ -5925,7 +5946,7 @@ public class PigParser implements PsiParser {
     if (!result_) result_ = mr_clause(builder_, level_ + 1);
     if (!result_) result_ = set_clause(builder_, level_ + 1);
     if (!result_) result_ = register_clause(builder_, level_ + 1);
-    if (!result_) result_ = consumeToken(builder_, PIG_DUMP);
+    if (!result_) result_ = dump_clause(builder_, level_ + 1);
     if (result_) {
       marker_.done(PIG_OP_CLAUSE);
     }

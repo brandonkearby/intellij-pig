@@ -20,6 +20,9 @@ public interface PigOpClause extends PsiElement {
   PigDistinctClause getDistinctClause();
 
   @Nullable
+  PigDumpClause getDumpClause();
+
+  @Nullable
   PigFilterClause getFilterClause();
 
   @Nullable

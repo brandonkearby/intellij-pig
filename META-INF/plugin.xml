@@ -7,36 +7,43 @@
   <description>Apache Pig Language Plugin</description>
 
   <change-notes><![CDATA[
-# IntelliJ - Pig Plugin
-Pig Plugin adds [Apache Pig](http://pig.apache.org/) Language support to [IntelliJ](http://www.jetbrains.com/idea/).
+<h1>IntelliJ - Pig Plugin</h1>
+<p>
+  Pig Plugin adds <a href="http://pig.apache.org">Apache Pig</a>
+  Language support to <a href="http://www.jetbrains.com/idea">IntelliJ</a>
+</p>
+<h2>Features</h2>
+<ul>
+  <li>Keyword highlighting</li>
+  <li>Code commenting/uncommenting</li>
+  <li>Brace matching</li>
+  <li>Syntax and errors highlighting</li>
+  <li>Comment folding</li>
+  <li>Doc Style Comments</li>
+</ul>
+<h2>Donations</h2>
+<p>
+If you would like to make a donation you can use
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T2DA32ERZGGXL&lc=US&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">PayPal</a>
+</p>
 
-# Features
-* Keyword highlighting
-* Code commenting/uncommenting
-* Brace matching
-* Syntax and errors highlighting
+<h2>Change log</h2>
 
-# Installation
-Select the pig-plugin.jar from the plugin manager or install from the IntelliJ plugin repo.
+<h3>Version 0.2</h3>
+<ul>
+  <li>Code Folding</li>
+  <li>Bug fixes issues with parens</li>
+  <li>Fixes with keywords in the set property name</li>
+  <li>Fixed order by clause missing simi</li>
+</ul>
 
-
-## Donations
-If you would like to make a donation you can use [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T2DA32ERZGGXL&lc=US&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted).
-
-
-## Change log
-
-
-### Version 0.2
-* Bug fixes issues with parens
-* Fixes with keywords in the set property name
-* Fixed order by clause missing simi
-
-### Version 0.1:
-* Keyword highlighting
-* Code commenting/uncommenting
-* Brace matching
-* Syntax and errors highlighting
+<h3>Version 0.1</h3>
+<ul>
+  <li>Keyword highlighting</li>
+  <li>Code commenting/uncommenting</li>
+  <li>Brace matching</li>
+  <li>Syntax and errors highlighting</li>
+</ul>
       ]]>
   </change-notes>
 

@@ -43,6 +43,12 @@ public class PigOpClauseImpl extends ASTWrapperPsiElement implements PigOpClause
 
   @Override
   @Nullable
+  public PigDumpClause getDumpClause() {
+    return findChildByClass(PigDumpClause.class);
+  }
+
+  @Override
+  @Nullable
   public PigFilterClause getFilterClause() {
     return findChildByClass(PigFilterClause.class);
   }
