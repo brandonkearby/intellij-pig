@@ -86,7 +86,7 @@ tokens = [
  DCOLON = '::'
 
 
-  QUOTEDSTRING_PATTERN="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+  QUOTEDSTRING="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
 
   // Comments
   TRADITIONAL_COMMENT="regexp:/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
@@ -104,7 +104,6 @@ tokens = [
 // Statement represented by a foreach operator with a nested block. Simple foreach statement
 pigFile ::= statement*
 
-QUOTEDSTRING ::= QUOTEDSTRING_PATTERN {methods=[getQuotedString]}
 
 IDENTIFIER ::= ID ('::' ID)*
 DOLLARVAR ::= '$' INTEGER_LITERAL

@@ -1,3 +1,4 @@
+/*
 package org.intellij.pig.lang.completion;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -35,3 +36,4 @@ public class PigFileSystemCompletionProvider extends CompletionProvider<Completi
         }
     }
 }
+*/
