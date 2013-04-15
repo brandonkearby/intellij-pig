@@ -17,6 +17,11 @@ If you would like to make a donation you can use [PayPal](https://www.paypal.com
 
 ## Change log
 
+### Version 0.3
+* Data type auto-completion
+
+
+
 
 ### Version 0.2
 * Bug fixes issues with parens
