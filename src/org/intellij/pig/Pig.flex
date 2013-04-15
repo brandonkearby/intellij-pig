@@ -110,6 +110,7 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "onschema"               { yybegin(YYINITIAL);  return PigTypes.PIG_ONSCHEMA; }
   "register"               { yybegin(YYINITIAL);  return PigTypes.PIG_REGISTER; }
   "rank"                   { yybegin(YYINITIAL);  return PigTypes.PIG_RANK; }
+  "returns"                { yybegin(YYINITIAL);  return PigTypes.PIG_RETURNS; }
   "rollup"                 { yybegin(YYINITIAL);  return PigTypes.PIG_ROLLUP; }
   "store"                  { yybegin(YYINITIAL);  return PigTypes.PIG_STORE; }
   "split"                  { yybegin(YYINITIAL);  return PigTypes.PIG_SPLIT; }

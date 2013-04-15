@@ -18,9 +18,7 @@ package org.intellij.pig;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
-import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
@@ -28,25 +26,25 @@ import org.intellij.pig.parser.PigLexer;
 import org.intellij.pig.psi.PigTypes;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
 
-    public static final TextAttributesKey ILLEGAL = createTextAttributesKey("PIG_ILLEGAL", getInvalidString());
-    public static final TextAttributesKey LINE_COMMENT = createTextAttributesKey("PIG_LINE_COMMENT", getLineComment());
-    public static final TextAttributesKey BLOCK_COMMENT = createTextAttributesKey("PIG_BLOCK_COMMENT", getBlockComment());
-    public static final TextAttributesKey DOC_COMMENT = createTextAttributesKey("PIG_DOC_COMMENT", getDocComment());
-    public static final TextAttributesKey STRING = createTextAttributesKey("PIG_STRING", getString());
-    public static final TextAttributesKey NUMBER = createTextAttributesKey("PIG_NUMBER", getNumber());
-    public static final TextAttributesKey KEYWORD = createTextAttributesKey("PIG_KEYWORD", getKeyword());
-    public static final TextAttributesKey PARENTHESES = createTextAttributesKey("PIG_PARENTHESES", getParentheses());
-    public static final TextAttributesKey BRACES = createTextAttributesKey("PIG_BRACES", getBraces());
-    public static final TextAttributesKey BRACKETS = createTextAttributesKey("PIG_BRACKETS", getBrackets());
-    public static final TextAttributesKey IDENTIFIER = createTextAttributesKey("PIG_IDENTIFIER", getIdentifier());
-    public static final TextAttributesKey OP_SIGN = createTextAttributesKey("PIG_OP_SIGN", getOpSign());
+    public static final TextAttributesKey ILLEGAL = createTextAttributesKey("PIG_ILLEGAL", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
+    public static final TextAttributesKey LINE_COMMENT = createTextAttributesKey("PIG_LINE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
+    public static final TextAttributesKey BLOCK_COMMENT = createTextAttributesKey("PIG_BLOCK_COMMENT", DefaultLanguageHighlighterColors.BLOCK_COMMENT);
+    public static final TextAttributesKey DOC_COMMENT = createTextAttributesKey("PIG_DOC_COMMENT", DefaultLanguageHighlighterColors.DOC_COMMENT);
+    public static final TextAttributesKey STRING = createTextAttributesKey("PIG_STRING", DefaultLanguageHighlighterColors.STRING);
+    public static final TextAttributesKey NUMBER = createTextAttributesKey("PIG_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
+    public static final TextAttributesKey KEYWORD = createTextAttributesKey("PIG_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD);
+    public static final TextAttributesKey PARENTHESES = createTextAttributesKey("PIG_PARENTHESES", DefaultLanguageHighlighterColors.PARENTHESES);
+    public static final TextAttributesKey BRACES = createTextAttributesKey("PIG_BRACES", DefaultLanguageHighlighterColors.BRACES);
+    public static final TextAttributesKey BRACKETS = createTextAttributesKey("PIG_BRACKETS", DefaultLanguageHighlighterColors.BRACKETS);
+    public static final TextAttributesKey IDENTIFIER = createTextAttributesKey("PIG_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER);
+    public static final TextAttributesKey OP_SIGN = createTextAttributesKey("PIG_OP_SIGN", DefaultLanguageHighlighterColors.OPERATION_SIGN);
 
     public static Set<IElementType> NUMBER_ELEMENTS = new HashSet<IElementType>();
     static {
@@ -65,7 +63,6 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_BYTEARRAY);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_CHARARRAY);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_COGROUP);
-        KEYWORD_ELEMENTS.add(PigTypes.PIG_CROSS);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_CUBE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DESC);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DECLARE);
@@ -103,12 +100,10 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_ROLLUP);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_RANK);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_REGISTER);
-        KEYWORD_ELEMENTS.add(PigTypes.PIG_SAMPLE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_SPLIT);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STORE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STREAM);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_SET);
-        KEYWORD_ELEMENTS.add(PigTypes.PIG_THROUGH);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_TUPLE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_USING);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_UNION);
@@ -184,161 +179,4 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         }
         return EMPTY;
     }
-
-  private static TextAttributesKey createTextAttributesKey(String name, TextAttributesKey defaultAttributes)
-  {
-    try
-    {
-      return TextAttributesKey.createTextAttributesKey(name, defaultAttributes);
-    }
-    catch (NoSuchMethodError e)
-    {
-      return TextAttributesKey.createTextAttributesKey(name, defaultAttributes.getDefaultAttributes());
-    }
-  }
-
-  private static TextAttributesKey getInvalidString()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.INVALID_STRING_ESCAPE;
-    }
-  }
-
-  private static TextAttributesKey getLineComment()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.LINE_COMMENT;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.LINE_COMMENT;
-    }
-  }
-
-  private static TextAttributesKey getBlockComment()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.BLOCK_COMMENT;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.JAVA_BLOCK_COMMENT;
-    }
-  }
-
-  private static TextAttributesKey getDocComment()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.DOC_COMMENT;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.DOC_COMMENT;
-    }
-  }
-
-  private static TextAttributesKey getString()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.STRING;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.STRING;
-    }
-  }
-
-  private static TextAttributesKey getNumber()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.NUMBER;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.NUMBER;
-    }
-  }
-
-  private static TextAttributesKey getKeyword()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.KEYWORD;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.KEYWORD;
-    }
-  }
-
-  private static TextAttributesKey getParentheses()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.PARENTHESES;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.PARENTHS;
-    }
-  }
-
-
-  private static TextAttributesKey getBraces()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.BRACES;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.BRACES;
-    }
-  }
-
-  private static TextAttributesKey getBrackets()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.BRACKETS;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.BRACKETS;
-    }
-  }
-
-  private static TextAttributesKey getIdentifier()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.IDENTIFIER;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return TextAttributesKey.createTextAttributesKey("PIG_IDENTIFIER", new TextAttributes(Color.BLACK, null, null, null, Font.PLAIN));
-    }
-  }
-
-  private static TextAttributesKey getOpSign()
-  {
-    try
-    {
-      return DefaultLanguageHighlighterColors.OPERATION_SIGN;
-    }
-    catch (NoClassDefFoundError e)
-    {
-      return SyntaxHighlighterColors.OPERATION_SIGN;
-    }
-  }
 }
