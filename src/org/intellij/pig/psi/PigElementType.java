@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class PigElementType extends IElementType {
-    public PigElementType(@NotNull @NonNls String debugName) {
+    public PigElementType(String debugName) {
         super(debugName, PigLanguage.INSTANCE);
     }
 }

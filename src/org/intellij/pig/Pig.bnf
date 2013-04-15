@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-
-
 //
 // Pig BNF Grammar
 //
@@ -24,8 +22,9 @@
   parserClass="org.intellij.pig.parser.PigParser"
   parserUtilClass="org.intellij.pig.parser.GeneratedParserUtilBase"
  
-  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
- 
+  implements="org.intellij.pig.psi.PigPsiElement"
+  extends="org.intellij.pig.psi.impl.PigPsiElementImpl"
+
   psiClassPrefix="Pig"
   psiImplClassSuffix="Impl"
   psiPackage="org.intellij.pig.psi"
@@ -36,7 +35,7 @@
   elementTypeClass="org.intellij.pig.psi.PigElementType"
   tokenTypeClass="org.intellij.pig.psi.PigTokenType"
  
-//  psiImplUtilClass="com.pig.impl.PigPsiImplUtil"
+  psiImplUtilClass="org.intellij.pig.psi.PigPsiImplUtil"
 
 tokens = [
   MAP
@@ -87,7 +86,7 @@ tokens = [
  DCOLON = '::'
 
 
-  QUOTEDSTRING="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
+  QUOTEDSTRING_PATTERN="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\")"
 
   // Comments
   TRADITIONAL_COMMENT="regexp:/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/"
@@ -105,8 +104,10 @@ tokens = [
 // Statement represented by a foreach operator with a nested block. Simple foreach statement
 pigFile ::= statement*
 
+QUOTEDSTRING ::= QUOTEDSTRING_PATTERN {methods=[getQuotedString]}
+
 IDENTIFIER ::= ID ('::' ID)*
- DOLLARVAR ::= '$' INTEGER_LITERAL
+DOLLARVAR ::= '$' INTEGER_LITERAL
 COMMENT ::= TRADITIONAL_COMMENT | DOC_COMMENT | END_OF_LINE_COMMENT
 statement ::= empty_statement
             | foreach_statement
@@ -212,7 +213,7 @@ import_clause ::= IMPORT QUOTEDSTRING  {pin = 1}
 
 define_clause ::= DEFINE IDENTIFIER ( cmd | func_clause | macro_clause)
 set_clause ::= SET property_name (scalar | func_name)
-register_clause ::= REGISTER QUOTEDSTRING
+register_clause ::= REGISTER QUOTEDSTRING {pin =1}
 private property_name ::= eid ('.' eid)*  // current hack adding map
 
 realias_clause ::= IDENTIFIER '=' IDENTIFIER

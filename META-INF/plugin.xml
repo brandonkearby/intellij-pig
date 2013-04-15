@@ -75,7 +75,7 @@ If you would like to make a donation you can use
     <lang.syntaxHighlighterFactory key="Pig" implementationClass="org.intellij.pig.PigSyntaxHighlighterFactory"/>
     <!--<colorSettingsPage implementation="org.intellij.pig.PigSettingsPage"/>-->
     <!--<annotator language="JAVA" implementationClass="org.intellij.pig.PigAnnotator"/>-->
-    <completion.contributor language="Pig" implementationClass="org.intellij.pig.PigCompletionContributor"/>
+    <completion.contributor language="Pig" implementationClass="org.intellij.pig.lang.completion.PigKeywordCompletionContributor"/>
     <lang.commenter language="Pig" implementationClass="org.intellij.pig.PigCommenter"/>
     <lang.foldingBuilder language="Pig" implementationClass="org.intellij.pig.PigCodeFoldingBuilder"/>
 
