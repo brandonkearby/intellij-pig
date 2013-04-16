@@ -100,6 +100,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_ROLLUP);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_RANK);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_REGISTER);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_SAMPLE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_SPLIT);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STORE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STREAM);
