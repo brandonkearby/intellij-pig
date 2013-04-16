@@ -78,7 +78,7 @@ If you would like to make a donation you can use
     <fileTypeFactory implementation="org.intellij.pig.PigFileTypeFactory"/>
     <lang.parserDefinition language="Pig" implementationClass="org.intellij.pig.PigParserDefinition"/>
     <lang.syntaxHighlighterFactory key="Pig" implementationClass="org.intellij.pig.PigSyntaxHighlighterFactory"/>
-    <!--<colorSettingsPage implementation="org.intellij.pig.PigSettingsPage"/>-->
+    <colorSettingsPage implementation="org.intellij.pig.PigColorSettingsPage"/>
     <!--<annotator language="JAVA" implementationClass="org.intellij.pig.PigAnnotator"/>-->
     <completion.contributor language="Pig" implementationClass="org.intellij.pig.lang.completion.PigKeywordCompletionContributor"/>
     <lang.commenter language="Pig" implementationClass="org.intellij.pig.PigCommenter"/>
