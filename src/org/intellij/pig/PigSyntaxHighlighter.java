@@ -63,6 +63,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_BYTEARRAY);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_CHARARRAY);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_COGROUP);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_CROSS);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_CUBE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DESC);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DECLARE);
