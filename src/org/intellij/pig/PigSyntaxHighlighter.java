@@ -104,6 +104,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STORE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STREAM);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_SET);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_THROUGH);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_TUPLE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_USING);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_UNION);
