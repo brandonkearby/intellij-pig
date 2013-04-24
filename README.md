@@ -2,7 +2,7 @@
 Pig Plugin adds [Apache Pig](http://pig.apache.org/) Language support to [IntelliJ](http://www.jetbrains.com/idea/).
 
 # Features
-* Data Type Auto-completion on schema<
+* Data Type Auto-completion
 * Keyword highlighting
 * Code commenting/uncommenting
 * Brace matching
