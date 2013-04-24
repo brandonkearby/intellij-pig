@@ -29,7 +29,15 @@ import java.util.Map;
 
 public class PigColorSettingsPage implements ColorSettingsPage {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
-    };
+      new AttributesDescriptor("Line Comments", PigSyntaxHighlighter.LINE_COMMENT),
+      new AttributesDescriptor("Block Comments", PigSyntaxHighlighter.BLOCK_COMMENT),
+      new AttributesDescriptor("Doc Comments", PigSyntaxHighlighter.DOC_COMMENT),
+      new AttributesDescriptor("Strings", PigSyntaxHighlighter.STRING),
+      new AttributesDescriptor("Constant Numbers", PigSyntaxHighlighter.NUMBER),
+      new AttributesDescriptor("Keywords", PigSyntaxHighlighter.KEYWORD),
+      new AttributesDescriptor("Identifiers", PigSyntaxHighlighter.IDENTIFIER),
+      new AttributesDescriptor("Binary Operators", PigSyntaxHighlighter.OP_SIGN),
+};
 
     @Nullable
     @Override
@@ -46,7 +54,47 @@ public class PigColorSettingsPage implements ColorSettingsPage {
     @NotNull
     @Override
     public String getDemoText() {
-        return "A = LOAD 'data' AS (name:chararray, age:int, gpa:float);";
+      return "set mapred.reduce.slowstart.completed.maps 0.999;\n" +
+        "set job.name 'queue messages for sending';\n" +
+        "\n" +
+        "%declare today `date \"+%Y/%m/%d\"`\n" +
+        "%declare kernel `uname -s`\n" +
+        "%declare todayseconds `bash -c 'if [[ \"$kernel\" == \"Linux\" ]]; then date -d $today \"+%s\"; else date -jf \"%Y/%m/%d\" $today \"+%s\"; fi'`\n" +
+        "%default todayUTCDate `date \\-\\-utc \"+%Y-%m-%d\"`\n" +
+        "\n" +
+        "/*\n" +
+        "A job that computes things\n" +
+        "*/\n" +
+        "\n" +
+        "REGISTER @fatjar@;\n" +
+        "\n" +
+        "inputData = LOAD '$input_data' USING BinaryJSON();\n" +
+        "\n" +
+        "emailSchedule = load '$email_schedule/#LATEST' using LiAvroStorage();\n" +
+        "todaysSchedule = filter emailSchedule by receiveUTCDate == '$todayUTCDate';\n" +
+        "\n" +
+        "scheduledRecipients = filter todaysSchedule by campaign == '$email_key';\n" +
+        "\n" +
+        "outputData = join scheduledRecipients by memberId, inputData by recipientID PARALLEL 50;\n" +
+        "\n" +
+        "\n" +
+        "-- reorder input to match output schema then send to production with Kafka writer\n" +
+        "-- also rename template_id to emailKey\n" +
+        "reordered = FOREACH outputData GENERATE\n" +
+        "\t(long) $todayseconds * 1000 as expectedDeliveryDate:long,\n" +
+        "\t(int) recipientID as recipientID:int,\n" +
+        "\t-8 as gmtOffset:int,\n" +
+        "\t(int) 2 as categoryID:int,\n" +
+        "\t(int) 0 as priority:int,\n" +
+        "\t'$email_key' as emailKey:chararray,\n" +
+        "\tCONCAT('$email_key','$todayseconds') as contentID:chararray,\n" +
+        "\tbody as body:chararray\n" +
+        ";\n" +
+        "\n" +
+        "\n" +
+        "\n" +
+        "STORE reordered INTO '$kafkahost' USING kafka.KafkaStorage('$kafkaschema');\n" +
+        "\n";
     }
 
     @Nullable

@@ -125,6 +125,8 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "define"                 { yybegin(YYINITIAL);  return PigTypes.PIG_DEFINE; }
   "register"               { yybegin(YYINITIAL);  return PigTypes.PIG_REGISTER; }
   "filter"                 { yybegin(YYINITIAL);  return PigTypes.PIG_FILTER; }
+  "through"                { yybegin(YYINITIAL);  return PigTypes.PIG_THROUGH; }
+  "sample"                 { yybegin(YYINITIAL);  return PigTypes.PIG_SAMPLE; }
 
   /* operators */
   "=" { yybegin(YYINITIAL);  return PigTypes.PIG_EQUAL; }
