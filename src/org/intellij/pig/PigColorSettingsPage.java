@@ -54,7 +54,10 @@ public class PigColorSettingsPage implements ColorSettingsPage {
     @NotNull
     @Override
     public String getDemoText() {
-      return "set mapred.reduce.slowstart.completed.maps 0.999;\n" +
+      return "/**\n" +
+             " * Sample Pig Script\n" +
+             " */\n" +
+              "set mapred.reduce.slowstart.completed.maps 0.999;\n" +
         "set job.name 'queue messages for sending';\n" +
         "\n" +
         "%declare today `date \"+%Y/%m/%d\"`\n" +
