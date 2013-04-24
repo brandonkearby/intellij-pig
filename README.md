@@ -23,7 +23,7 @@ If you would like to make a donation you can use [PayPal](https://www.paypal.com
 ## Change log
 
 ####Version 1.4
-I'm happy to announce that rmelick and I have unified our efforts in the IntelliJ Pig Language Plugin. This release includes any deltas between our codebases.
+I'm happy to announce that rmelick and brandon.kearby have unified their efforts in the IntelliJ Pig Language Plugin. This release includes any deltas between our codebases.
 
 * Fix SyntaxHighlighter bug that was causing plugin to crash in older version of IDEA (e.x. 11)
 * Added support for the pig color settings page

@@ -1,5 +1,5 @@
 <idea-plugin version="2">
-  <id>org.intellij.pig</id>
+  <id>org.apache.pig.plugin.idea</id>
   <name>Pig</name>
   <version>1.4</version>
   <vendor email="brandon.kearby at gmail com">Brandon Kearby &amp; rmelickli</vendor>
