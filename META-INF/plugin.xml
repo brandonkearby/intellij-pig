@@ -1,8 +1,9 @@
 <idea-plugin version="2">
   <id>org.intellij.pig</id>
   <name>Pig</name>
-  <version>0.2</version>
+  <version>1.4</version>
   <vendor email="brandon.kearby at gmail com">Brandon Kearby</vendor>
+  <vendor email="rmelick at cs.hmc.edu">rmelickli</vendor>
 
   <description>Apache Pig Language Plugin</description>
 
@@ -14,12 +15,14 @@
 </p>
 <h2>Features</h2>
 <ul>
+  <li>Data Type Auto-completion on schema</li>
   <li>Keyword highlighting</li>
   <li>Code commenting/uncommenting</li>
   <li>Brace matching</li>
   <li>Syntax and errors highlighting</li>
   <li>Comment folding</li>
   <li>Doc Style Comments</li>
+  <li>Custom Color Settings Page</li>
 </ul>
 <h2>Donations</h2>
 <p>
@@ -28,13 +31,20 @@ If you would like to make a donation you can use
 </p>
 
 <h2>Change log</h2>
+<h3>Version 1.4</h3>
+<p>
+I'm happy to announce that rmelick and I have unified our efforts in the IntelliJ Pig Language Plugin. This release includes any deltas between our codebases.
+<ul>
+  <li>Fix SyntaxHighlighter bug that was causing plugin to crash in older version of IDEA (e.x. 11)</li>
+  <li>Added support for the pig color settings page</li>
+</ul>
 
-<h3>Version 0.3</h3>
+<h3>Version 1.3</h3>
 <ul>
   <li>Data type auto-completion</li>
 </ul>
 
-<h3>Version 0.2</h3>
+<h3>Version 1.2</h3>
 <ul>
   <li>Code Folding</li>
   <li>Bug fixes issues with parens</li>
@@ -42,7 +52,7 @@ If you would like to make a donation you can use
   <li>Fixed order by clause missing simi</li>
 </ul>
 
-<h3>Version 0.1</h3>
+<h3>Version 1.1</h3>
 <ul>
   <li>Keyword highlighting</li>
   <li>Code commenting/uncommenting</li>
