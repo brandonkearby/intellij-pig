@@ -211,7 +211,9 @@ explicit_type_cast ::= simple_type | explicit_map_type | explicit_tuple_type_cas
 import_clause ::= IMPORT QUOTEDSTRING  {pin = 1}
 
 define_clause ::= DEFINE IDENTIFIER ( cmd | func_clause | macro_clause)
-set_clause ::= SET property_name (scalar | func_name)
+set_clause ::= SET property_name property_value
+private property_value ::= ('-')* (scalar | func_name)
+
 register_clause ::= REGISTER QUOTEDSTRING {pin =1}
 private property_name ::= eid ('.' eid)*  // current hack adding map
 
