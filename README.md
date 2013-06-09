@@ -14,7 +14,7 @@ Select the pig-plugin.jar from the plugin manager or install from the IntelliJ p
 
 ## Authors
 * Brandon Kearby
-* rmelickli
+* Russell Melick
 
 ## Donations
 If you would like to make a donation you can use [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T2DA32ERZGGXL&lc=US&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted).
@@ -22,7 +22,11 @@ If you would like to make a donation you can use [PayPal](https://www.paypal.com
 
 ## Change log
 
-####Version 1.4
+### Version 1.5
+* Add support for * in REGISTER and RMF statements
+* Minor bugfixes to color settings page
+
+### Version 1.4
 I'm happy to announce that rmelick and brandon.kearby have unified their efforts in the IntelliJ Pig Language Plugin. This release includes any deltas between our codebases.
 
 * Fix SyntaxHighlighter bug that was causing plugin to crash in older version of IDEA (e.x. 11)

@@ -214,7 +214,7 @@ define_clause ::= DEFINE IDENTIFIER ( cmd | func_clause | macro_clause)
 set_clause ::= SET property_name property_value
 private property_value ::= ('-')* (scalar | func_name)
 
-register_clause ::= REGISTER QUOTEDSTRING {pin =1}
+register_clause ::= REGISTER FILENAME {pin =1}
 private property_name ::= eid ('.' eid)*  // current hack adding map
 
 realias_clause ::= IDENTIFIER '=' IDENTIFIER
@@ -242,6 +242,9 @@ op_clause ::= define_clause
           | set_clause
           | register_clause
           | dump_clause
+          | rmf_clause
+
+rmf_clause ::= RMF FILENAME
 
 dump_clause ::= DUMP IDENTIFIER;
 
