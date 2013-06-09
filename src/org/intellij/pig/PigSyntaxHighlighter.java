@@ -103,6 +103,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_ROLLUP);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_RANK);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_REGISTER);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_RMF);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_SAMPLE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_SPLIT);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STORE);
@@ -161,6 +162,9 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         if (type == PigTypes.PIG_EXECCOMMAND) {
             return pack(STRING);
         }
+        if (type == PigTypes.PIG_FILENAME) {
+            return pack(STRING);
+        }
         if (type == PigTypes.PIG_EQUAL) {
             return pack(OP_SIGN);
         }
@@ -173,7 +177,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         if (type == PigTypes.PIG_RBRACKET || type == PigTypes.PIG_LBRACKET) {
             return pack(BRACKETS);
         }
-        if (type == PigTypes.PIG_IDENTIFIER) {
+        if (type == PigTypes.PIG_IDENTIFIER || type == PigTypes.PIG_ID) {
             return pack(IDENTIFIER);
         }
         if (KEYWORD_ELEMENTS.contains(type)) {

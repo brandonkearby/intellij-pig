@@ -65,7 +65,7 @@ END_OF_LINE_COMMENT="-""-"[^\r\n]*
 
 COMMENT = {TRADITIONAL_COMMENT} | {END_OF_LINE_COMMENT} |{DOC_COMMENT}
 
-FILENAME=([:jletterdigit:]|["*"]|["/"]|[":"]|["."]|["$"])*
+FILENAME=([:jletterdigit:]|["*"]|["/"]|[":"]|["."]|["$"]|["@"])*
 
 STRING_LITERAL=\'([^\\\'\r\n]|{ESCAPE_SEQUENCE})*(\'|\\)?
 ESCAPE_SEQUENCE=\\[^\r\n]

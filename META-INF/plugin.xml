@@ -1,8 +1,8 @@
 <idea-plugin version="2">
   <id>org.apache.pig.plugin.idea</id>
   <name>Pig</name>
-  <version>1.4</version>
-  <vendor email="brandon.kearby at gmail com">Brandon Kearby &amp; rmelickli</vendor>
+  <version>1.5</version>
+  <vendor email="brandon.kearby at gmail com">Brandon Kearby &amp; Russell Melick</vendor>
 
   <description>Apache Pig Language Plugin</description>
 
@@ -11,6 +11,9 @@
 <p>
   Pig Plugin adds <a href="http://pig.apache.org">Apache Pig</a>
   Language support to <a href="http://www.jetbrains.com/idea">IntelliJ</a>
+
+  Note: you may already have .pig files associated with the text editor.
+  Go to IDE Settings -> File Types to assign them to the pig plugin if nothing happens after you install it.
 </p>
 <h2>Features</h2>
 <ul>
@@ -30,6 +33,11 @@ If you would like to make a donation you can use
 </p>
 
 <h2>Change log</h2>
+<h3>Version 1.5</h3>
+<ul>
+  <li>Add support for * in REGISTER and RMF statements</li>
+  <li>Minor bugfixes to color settings page</li>
+</ul>
 <h3>Version 1.4</h3>
 <p>
 We are happy to announce that rmelick and I have unified our efforts in the IntelliJ Pig Language Plugin. This release includes any deltas between our codebases.
