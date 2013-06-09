@@ -75,6 +75,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DEFINE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DATETIME);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_DUMP);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_FALSE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_FILTER);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_FLOAT);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_FULL);
@@ -110,6 +111,7 @@ public class PigSyntaxHighlighter extends SyntaxHighlighterBase {
         KEYWORD_ELEMENTS.add(PigTypes.PIG_STREAM);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_SET);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_THROUGH);
+        KEYWORD_ELEMENTS.add(PigTypes.PIG_TRUE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_TUPLE);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_USING);
         KEYWORD_ELEMENTS.add(PigTypes.PIG_UNION);
