@@ -24,6 +24,7 @@ import org.intellij.pig.psi.PigTokenType;
 %function advance
 %type IElementType
 
+%xstate FILENAME
 
 /* main character classes */
 DIGIT=[0-9]
@@ -64,6 +65,7 @@ END_OF_LINE_COMMENT="-""-"[^\r\n]*
 
 COMMENT = {TRADITIONAL_COMMENT} | {END_OF_LINE_COMMENT} |{DOC_COMMENT}
 
+FILENAME=([:jletterdigit:]|["*""/"":"".""$""@""{""}""-"])*
 
 STRING_LITERAL=\'([^\\\'\r\n]|{ESCAPE_SEQUENCE})*(\'|\\)?
 ESCAPE_SEQUENCE=\\[^\r\n]
@@ -108,9 +110,10 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "partition"              { yybegin(YYINITIAL);  return PigTypes.PIG_PARTITION; }
   "order"                  { yybegin(YYINITIAL);  return PigTypes.PIG_ORDER; }
   "onschema"               { yybegin(YYINITIAL);  return PigTypes.PIG_ONSCHEMA; }
-  "register"               { yybegin(YYINITIAL);  return PigTypes.PIG_REGISTER; }
+  "register"               { yybegin(FILENAME);  return PigTypes.PIG_REGISTER; }
   "rank"                   { yybegin(YYINITIAL);  return PigTypes.PIG_RANK; }
   "returns"                { yybegin(YYINITIAL);  return PigTypes.PIG_RETURNS; }
+  "rmf"                    { yybegin(FILENAME);  return PigTypes.PIG_RMF; }
   "rollup"                 { yybegin(YYINITIAL);  return PigTypes.PIG_ROLLUP; }
   "store"                  { yybegin(YYINITIAL);  return PigTypes.PIG_STORE; }
   "split"                  { yybegin(YYINITIAL);  return PigTypes.PIG_SPLIT; }
@@ -124,7 +127,6 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "foreach"                { yybegin(YYINITIAL);  return PigTypes.PIG_FOREACH; }
   "generate"               { yybegin(YYINITIAL);  return PigTypes.PIG_GENERATE; }
   "define"                 { yybegin(YYINITIAL);  return PigTypes.PIG_DEFINE; }
-  "register"               { yybegin(YYINITIAL);  return PigTypes.PIG_REGISTER; }
   "filter"                 { yybegin(YYINITIAL);  return PigTypes.PIG_FILTER; }
   "through"                { yybegin(YYINITIAL);  return PigTypes.PIG_THROUGH; }
   "sample"                 { yybegin(YYINITIAL);  return PigTypes.PIG_SAMPLE; }
@@ -171,12 +173,12 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   "matches" { yybegin(YYINITIAL);  return PigTypes.PIG_STR_OP_MATCHES; }
 
    // Join operators
-  "and"   { yybegin(YYINITIAL);    return PigTypes.PIG_AND; }
-  "not"   { yybegin(YYINITIAL);    return PigTypes.PIG_NOT; }
-  "or"    { yybegin(YYINITIAL);     return PigTypes.PIG_OR; }
-  "join"  { yybegin(YYINITIAL);   return PigTypes.PIG_JOIN; }
+  "and"   { yybegin(YYINITIAL);  return PigTypes.PIG_AND; }
+  "not"   { yybegin(YYINITIAL);  return PigTypes.PIG_NOT; }
+  "or"    { yybegin(YYINITIAL);  return PigTypes.PIG_OR; }
+  "join"  { yybegin(YYINITIAL);  return PigTypes.PIG_JOIN; }
   "cross" { yybegin(YYINITIAL);  return PigTypes.PIG_CROSS; }
-  "left" { yybegin(YYINITIAL);   return PigTypes.PIG_LEFT; }
+  "left"  { yybegin(YYINITIAL);  return PigTypes.PIG_LEFT; }
   "right" { yybegin(YYINITIAL);  return PigTypes.PIG_RIGHT; }
   "inner" { yybegin(YYINITIAL);  return PigTypes.PIG_INNER; }
   "outer" { yybegin(YYINITIAL);  return PigTypes.PIG_OUTER; }
@@ -203,5 +205,12 @@ ESCAPE_SEQUENCE=\\[^\r\n]
   {ID}           { yybegin(YYINITIAL); return PigTypes.PIG_ID; }
   {SCRIPT_PARAM_NAME}           { yybegin(YYINITIAL); return PigTypes.PIG_SCRIPT_PARAM_NAME; }
 
+  . { return TokenType.BAD_CHARACTER; }
+}
+
+// separate out filenames so they don't override comments and identifiers
+<FILENAME> {
+  {FILENAME} { yybegin(YYINITIAL);  return PigTypes.PIG_FILENAME; }
+  {WHITE_SPACE_CHAR}+    { return TokenType.WHITE_SPACE; }
   . { return TokenType.BAD_CHARACTER; }
 }
