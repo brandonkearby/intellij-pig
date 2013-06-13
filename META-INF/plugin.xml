@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.apache.pig.plugin.idea</id>
   <name>Pig</name>
-  <version>1.5</version>
+  <version>1.6</version>
   <vendor email="brandon.kearby at gmail com">Brandon Kearby &amp; Russell Melick</vendor>
 
   <description>Apache Pig Language Plugin</description>
@@ -33,6 +33,10 @@ If you would like to make a donation you can use
 </p>
 
 <h2>Change log</h2>
+<h3>Version 1.5</h3>
+<ul>
+  <li>1.5 features did not make it to jetbrains repository</li>
+</ul>
 <h3>Version 1.5</h3>
 <ul>
   <li>Add support for * in REGISTER and RMF statements</li>

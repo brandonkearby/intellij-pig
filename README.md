@@ -22,6 +22,9 @@ If you would like to make a donation you can use [PayPal](https://www.paypal.com
 
 ## Change log
 
+### Version 1.6
+* 1.5 features did not seem to get uploaded correctly into JetBrains
+
 ### Version 1.5
 * Add support for * in REGISTER and RMF statements
 * Minor bugfixes to color settings page
