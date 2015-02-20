@@ -16,8 +16,15 @@ Select the pig-plugin.jar from the plugin manager or install from the IntelliJ p
 * Brandon Kearby
 * Russell Melick
 
-## Donations
-If you would like to make a donation you can use [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T2DA32ERZGGXL&lc=US&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted).
+How to get started developing
+1. Check out with git
+1. Set up intellij for plugin development https://confluence.jetbrains.com/display/IDEADEV/Getting+Started+with+Plugin+Development#GettingStartedwithPluginDevelopment-anchor2
+1. Delete the existing module, and create a new plugin module?
+1. DO NOT Install jflex plugin.  The grammar kit plugin is sufficient.
+1. Install grammar kit plugin
+1. "Generate parser code" by right clicking on the Pig.bnf file
+1. "Run jflex generator" by right clicking on the Pig.flex file
+1. Go through the Intellij tutorial if you get stuck (https://confluence.jetbrains.com/display/IntelliJIDEA/Custom+Language+Support)
 
 
 ## Change log
