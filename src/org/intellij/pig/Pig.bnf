@@ -35,7 +35,7 @@
   elementTypeClass="org.intellij.pig.psi.PigElementType"
   tokenTypeClass="org.intellij.pig.psi.PigTokenType"
  
-  psiImplUtilClass="org.intellij.pig.psi.PigPsiImplUtil"
+  psiImplUtilClass="org.intellij.pig.psi.impl.PigPsiImplUtil"
 
 tokens = [
   MAP
@@ -105,7 +105,7 @@ tokens = [
 pigFile ::= statement*
 
 
-IDENTIFIER ::= ID ('::' ID)*
+IDENTIFIER ::= ID ('::' ID)* {methods=[getName]}
 DOLLARVAR ::= '$' INTEGER_LITERAL
 COMMENT ::= TRADITIONAL_COMMENT | DOC_COMMENT | END_OF_LINE_COMMENT
 statement ::= empty_statement
