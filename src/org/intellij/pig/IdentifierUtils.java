@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class IdentifierUtils {
     /**
-     * Find a single identifier
+     * Find a single identifier within the entire project
      * @param project
      * @param identifierName
      * @return
@@ -32,15 +32,13 @@ public class IdentifierUtils {
         for (VirtualFile virtualFile : virtualFiles) {
             PigFile pigFile = (PigFile) PsiManager.getInstance(project).findFile(virtualFile);
             if (pigFile != null) {
-                PigIdentifier[] identifiers = PsiTreeUtil.getChildrenOfType(pigFile, PigIdentifier.class);
-                if (identifiers != null) {
-                    for (PigIdentifier identifier : identifiers) {
-                        if (identifierName.equals(identifier.getName())) {
-                            if (result == null) {
-                                result = new ArrayList<PigIdentifier>(1);
-                            }
-                            result.add(identifier);
+                Collection<PigIdentifier> identifiers = PsiTreeUtil.findChildrenOfType(pigFile, PigIdentifier.class);
+                for (PigIdentifier identifier : identifiers) {
+                    if (identifierName.equals(identifier.getName())) {
+                        if (result == null) {
+                            result = new ArrayList<PigIdentifier>(1);
                         }
+                        result.add(identifier);
                     }
                 }
             }
@@ -48,6 +46,26 @@ public class IdentifierUtils {
         return result != null ? result : Collections.<PigIdentifier>emptyList();
     }
 
+    /**
+     * Find the definition of a variable within the specified file
+     * @param file file to search in
+     * @param identifierName identifier to look for
+     * @return reference to actual PigIdentifier where that name was defined
+     */
+    public static PigIdentifier findDefinition(PigFile file, String identifierName) {
+        Collection<PigIdentifier> identifiers = PsiTreeUtil.findChildrenOfType(file, PigIdentifier.class);
+        for (PigIdentifier identifier : identifiers) {
+            if (identifierName.equals(identifier.getName())) {
+                // TODO this assumes that the first time we see an identifier is the definition, where first
+                // is decided by the findChildrenOfType method.  We should probably do something smarter, like
+                // identifying that it is within an assignment statement in the bnf
+                return identifier;
+            }
+        }
+        return null;
+    }
+
+    // Find all identifiers within the project
     public static List<PigIdentifier> findIdentifiers(Project project) {
         List<PigIdentifier> result = new ArrayList<PigIdentifier>();
         Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, PigFileType.INSTANCE,
@@ -55,10 +73,8 @@ public class IdentifierUtils {
         for (VirtualFile virtualFile : virtualFiles) {
             PigFile pigFile = (PigFile) PsiManager.getInstance(project).findFile(virtualFile);
             if (pigFile != null) {
-                PigIdentifier[] identifiers = PsiTreeUtil.getChildrenOfType(pigFile, PigIdentifier.class);
-                if (identifiers != null) {
-                    Collections.addAll(result, identifiers);
-                }
+                Collection<PigIdentifier> identifiers = PsiTreeUtil.findChildrenOfType(pigFile, PigIdentifier.class);
+                result.addAll(identifiers);
             }
         }
         return result;

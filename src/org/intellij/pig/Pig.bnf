@@ -105,7 +105,7 @@ pigFile ::= statement*
 
 IDENTIFIER ::= ID ('::' ID)* {mixin="org.intellij.pig.psi.impl.PigNamedElementImpl"
                               implements="org.intellij.pig.psi.PigNamedElement"
-                              methods=[getName setName getNameIdentifier]}
+                              methods=[getName setName getNameIdentifier getReference]}
 DOLLARVAR ::= '$' INTEGER_LITERAL
 COMMENT ::= TRADITIONAL_COMMENT | DOC_COMMENT | END_OF_LINE_COMMENT
 statement ::= empty_statement

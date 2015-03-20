@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import org.intellij.pig.psi.PigFile;
 import org.intellij.pig.psi.PigIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  *
  */
-public class PigIdentifierReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
+public class PigIdentifierReference extends PsiReferenceBase<PsiElement> implements PsiReference {
     private final String _name;
 
     public PigIdentifierReference(PsiElement element, TextRange range) {
@@ -23,7 +24,7 @@ public class PigIdentifierReference extends PsiReferenceBase<PsiElement> impleme
         _name = element.getText().substring(range.getStartOffset(), range.getEndOffset());
     }
 
-
+/**
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
@@ -36,11 +37,19 @@ public class PigIdentifierReference extends PsiReferenceBase<PsiElement> impleme
         return results.toArray(new ResolveResult[results.size()]);
     }
 
+
     @Nullable
     @Override
     public PsiElement resolve() {
         ResolveResult[] resolveResults = multiResolve(false);
         return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
+    }
+ **/
+
+    @Nullable
+    @Override
+    public PsiElement resolve() {
+        return IdentifierUtils.findDefinition((PigFile) myElement.getContainingFile(), _name);
     }
 
     @NotNull

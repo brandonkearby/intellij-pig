@@ -1,7 +1,10 @@
 package org.intellij.pig.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import org.intellij.pig.PigIdentifierReference;
 import org.intellij.pig.psi.PigElementFactory;
 import org.intellij.pig.psi.PigIdentifier;
 import org.intellij.pig.psi.PigTypes;
@@ -22,5 +25,10 @@ public class PigPsiImplUtil {
 
     public static PsiElement getNameIdentifier(PigIdentifier element) {
         return element;
+    }
+
+    public static PsiReference getReference(PigIdentifier element) {
+        String name = getName(element);
+        return new PigIdentifierReference(element, name == null ? TextRange.EMPTY_RANGE : TextRange.from(0, name.length()));
     }
 }
