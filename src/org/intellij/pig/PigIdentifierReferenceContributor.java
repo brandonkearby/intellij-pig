@@ -14,5 +14,6 @@ import org.jetbrains.annotations.NotNull;
 public class PigIdentifierReferenceContributor extends PsiReferenceContributor {
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
+      //registrar.registerReferenceProvider(PlatformPatterns.psiElement());
     }
 }

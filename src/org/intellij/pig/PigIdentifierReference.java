@@ -5,9 +5,11 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.pig.psi.PigFile;
+import org.intellij.pig.psi.PigFuncName;
 import org.intellij.pig.psi.PigIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +53,10 @@ public class PigIdentifierReference extends PsiReferenceBase<PsiElement> impleme
     @Nullable
     @Override
     public PsiElement resolve() {
-        return IdentifierUtils.findDefinition((PigFile) myElement.getContainingFile(), _name);
+      if (PsiTreeUtil.getTopmostParentOfType(myElement, PigFuncName.class) != null) {
+        return null; // don't attempt to provide references for parts of function names
+      }
+       return IdentifierUtils.findDefinition((PigFile) myElement.getContainingFile(), _name);
     }
 
     @NotNull

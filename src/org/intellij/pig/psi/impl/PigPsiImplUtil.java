@@ -2,10 +2,16 @@ package org.intellij.pig.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
+import com.intellij.psi.search.GlobalSearchScope;
+import org.intellij.pig.JavaClassReferenceWrapper;
 import org.intellij.pig.PigIdentifierReference;
 import org.intellij.pig.psi.PigElementFactory;
+import org.intellij.pig.psi.PigFuncClause;
 import org.intellij.pig.psi.PigIdentifier;
 import org.intellij.pig.psi.PigTypes;
 
@@ -30,5 +36,15 @@ public class PigPsiImplUtil {
     public static PsiReference getReference(PigIdentifier element) {
         String name = getName(element);
         return new PigIdentifierReference(element, name == null ? TextRange.EMPTY_RANGE : TextRange.from(0, name.length()));
+    }
+
+    /**
+     * Get a reference to the java class that this function is using
+     */
+    public static PsiReference getReference(PigFuncClause element) {
+      String name = element.getFuncName().getText();
+      return new JavaClassReferenceWrapper(element, name);
+      //String name = getName(element);
+      //return new PigIdentifierReference(element, name == null ? TextRange.EMPTY_RANGE : TextRange.from(0, name.length()));
     }
 }

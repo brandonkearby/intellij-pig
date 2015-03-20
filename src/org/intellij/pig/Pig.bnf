@@ -262,7 +262,8 @@ error_clause ::= STDERROR '(' ( QUOTEDSTRING ( LIMIT INTEGER )? )? ')'
 
 load_clause ::= LOAD QUOTEDSTRING ( USING func_clause )? as_clause? {pin = 1}
 
-func_clause ::= func_name_with_args |  func_name_zero_args | func_name
+func_clause ::= func_name_with_args |  func_name_zero_args | func_name {
+                                                                       methods=[getReference]}
 private func_name_zero_args ::= func_name '(' ')'
 private func_name_with_args ::= func_name '(' func_args ')'
 
