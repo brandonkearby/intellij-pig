@@ -5,6 +5,8 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiUtil;
+import com.intellij.util.IncorrectOperationException;
 import org.intellij.pig.psi.PigFile;
 import org.intellij.pig.psi.PigIdentifier;
 import org.jetbrains.annotations.NotNull;
@@ -68,4 +70,15 @@ public class PigIdentifierReference extends PsiReferenceBase<PsiElement> impleme
         }
         return variants.toArray();
     }
+
+  /**
+   * Called when refactoring elements
+   */
+  @Override
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    if (myElement instanceof PigIdentifier) {
+      return ((PigIdentifier) myElement).setName(newElementName);
+    }
+    return super.handleElementRename(newElementName);
+  }
 }
