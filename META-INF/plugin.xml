@@ -102,6 +102,7 @@ We are happy to announce that rmelick and I have unified our efforts in the Inte
     <colorSettingsPage implementation="org.intellij.pig.PigColorSettingsPage"/>
     <!--<annotator language="JAVA" implementationClass="org.intellij.pig.PigAnnotator"/>-->
     <!--<completion.contributor language="Pig" implementationClass="org.intellij.pig.lang.completion.PigKeywordCompletionContributor"/>-->
+    <lang.refactoringSupport language="Pig" implementationClass="org.intellij.pig.lang.refactoring.PigRefactoringSupportProvider"/>
     <lang.commenter language="Pig" implementationClass="org.intellij.pig.PigCommenter"/>
     <lang.foldingBuilder language="Pig" implementationClass="org.intellij.pig.PigCodeFoldingBuilder"/>
     <psi.referenceContributor implementation="org.intellij.pig.PigIdentifierReferenceContributor"/>
