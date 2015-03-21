@@ -6,6 +6,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.IncorrectOperationException;
+import org.intellij.pig.psi.PigFuncClause;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,5 +34,16 @@ public class JavaClassReferenceWrapper  extends PsiReferenceBase<PsiElement> imp
   @Override
   public Object[] getVariants() {
     return new Object[0];
+  }
+
+  /**
+   * Called when refactoring elements
+   */
+  @Override
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    if (myElement instanceof PigFuncClause) {
+      return ((PigFuncClause) myElement).setName(newElementName);
+    }
+    return super.handleElementRename(newElementName);
   }
 }
