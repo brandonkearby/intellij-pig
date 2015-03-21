@@ -17,6 +17,7 @@
 </p>
 <h2>Features</h2>
 <ul>
+  <li>Find Usages and refactoring support for UDFs and pig variables</li>
   <li>Data Type Auto-completion on schema</li>
   <li>Keyword highlighting</li>
   <li>Code commenting/uncommenting</li>
@@ -26,13 +27,12 @@
   <li>Doc Style Comments</li>
   <li>Custom Color Settings Page</li>
 </ul>
-<h2>Donations</h2>
-<p>
-If you would like to make a donation you can use
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T2DA32ERZGGXL&lc=US&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted">PayPal</a>
-</p>
 
 <h2>Change log</h2>
+<h3>Version 1.7</h3>
+<ul>
+  <li>Find Usages and refactoring support for UDFs and pig variables</li>
+</ul>
 <h3>Version 1.6</h3>
 <ul>
   <li>1.5 features did not make it to jetbrains repository</li>
