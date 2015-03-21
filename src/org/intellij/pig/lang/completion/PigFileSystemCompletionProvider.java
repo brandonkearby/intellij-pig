@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.util.ProcessingContext;
-import org.intellij.pig.psi.PigPsiImplUtil;
+import org.intellij.pig.psi.impl.PigPsiImplUtil;
 import org.intellij.pig.psi.PigQUOTEDSTRING;
 import org.jetbrains.annotations.NotNull;
 

@@ -2,6 +2,7 @@
 Pig Plugin adds [Apache Pig](http://pig.apache.org/) Language support to [IntelliJ](http://www.jetbrains.com/idea/).
 
 # Features
+* Find Usages and refactoring support for UDFs and pig variables
 * Data Type Auto-completion
 * Keyword highlighting
 * Code commenting/uncommenting
@@ -10,17 +11,29 @@ Pig Plugin adds [Apache Pig](http://pig.apache.org/) Language support to [Intell
 * Custom Color Settings Page
 
 # Installation
-Select the pig-plugin.jar from the plugin manager or install from the IntelliJ plugin repo.
+Install from the IntelliJ plugin repo.
 
 ## Authors
 * Brandon Kearby
 * Russell Melick
 
-## Donations
-If you would like to make a donation you can use [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T2DA32ERZGGXL&lc=US&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted).
+## How to get started developing
+1. Check out with git
+2. Set up intellij for plugin development https://confluence.jetbrains.com/display/IDEADEV/Getting+Started+with+Plugin+Development#GettingStartedwithPluginDevelopment-anchor2
+3. Install grammar kit plugin
+4. DO NOT Install jflex plugin.  The grammar kit plugin is sufficient.
+5. "Generate parser code" by right clicking on the Pig.bnf file
+6. "Run jflex generator" by right clicking on the Pig.flex file
+7. Go through the Intellij tutorial if you get stuck (https://confluence.jetbrains.com/display/IntelliJIDEA/Custom+Language+Support)
 
 
 ## Change log
+
+### Version 1.7
+* Add Find Usages and refactoring support for UDFs and pig variables
+
+### Version 1.6
+* 1.5 features did not seem to get uploaded correctly into JetBrains
 
 ### Version 1.5
 * Add support for * in REGISTER and RMF statements

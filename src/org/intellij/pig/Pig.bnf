@@ -20,10 +20,8 @@
 
 {
   parserClass="org.intellij.pig.parser.PigParser"
-  parserUtilClass="org.intellij.pig.parser.GeneratedParserUtilBase"
- 
-  implements="org.intellij.pig.psi.PigPsiElement"
-  extends="org.intellij.pig.psi.impl.PigPsiElementImpl"
+  //parserUtilClass="com.intellij.lang.parser.GeneratedParserUtilBase"
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
 
   psiClassPrefix="Pig"
   psiImplClassSuffix="Impl"
@@ -35,7 +33,7 @@
   elementTypeClass="org.intellij.pig.psi.PigElementType"
   tokenTypeClass="org.intellij.pig.psi.PigTokenType"
  
-  psiImplUtilClass="org.intellij.pig.psi.PigPsiImplUtil"
+  psiImplUtilClass="org.intellij.pig.psi.impl.PigPsiImplUtil"
 
 tokens = [
   MAP
@@ -105,7 +103,9 @@ tokens = [
 pigFile ::= statement*
 
 
-IDENTIFIER ::= ID ('::' ID)*
+IDENTIFIER ::= ID ('::' ID)* {mixin="org.intellij.pig.psi.impl.PigNamedElementImpl"
+                              implements="org.intellij.pig.psi.PigNamedElement"
+                              methods=[getName setName getNameIdentifier getReference]}
 DOLLARVAR ::= '$' INTEGER_LITERAL
 COMMENT ::= TRADITIONAL_COMMENT | DOC_COMMENT | END_OF_LINE_COMMENT
 statement ::= empty_statement
@@ -262,7 +262,9 @@ error_clause ::= STDERROR '(' ( QUOTEDSTRING ( LIMIT INTEGER )? )? ')'
 
 load_clause ::= LOAD QUOTEDSTRING ( USING func_clause )? as_clause? {pin = 1}
 
-func_clause ::= func_name_with_args |  func_name_zero_args | func_name
+func_clause ::= func_name_with_args |  func_name_zero_args | func_name {mixin="org.intellij.pig.psi.impl.PigNamedElementImpl"
+                                                                        implements="org.intellij.pig.psi.PigNamedElement"
+                                                                        methods=[getName setName getNameIdentifier getReference]}
 private func_name_zero_args ::= func_name '(' ')'
 private func_name_with_args ::= func_name '(' func_args ')'
 
